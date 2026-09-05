@@ -1,0 +1,57 @@
+{
+  "model": "gpt2",
+  "prefix": 96,
+  "decode": 32,
+  "heads": 12,
+  "positions": 96,
+  "head_dim": 64,
+  "rows": [
+    {
+      "rank": 4,
+      "kept": 0.041666666666666664,
+      "agreement": 0.20833333333333334
+    },
+    {
+      "rank": 8,
+      "kept": 0.08333333333333333,
+      "agreement": 0.20833333333333334
+    },
+    {
+      "rank": 16,
+      "kept": 0.16666666666666666,
+      "agreement": 0.17708333333333334
+    },
+    {
+      "rank": 24,
+      "kept": 0.25,
+      "agreement": 0.18229166666666666
+    },
+    {
+      "rank": 32,
+      "kept": 0.3333333333333333,
+      "agreement": 0.203125
+    },
+    {
+      "rank": 48,
+      "kept": 0.5,
+      "agreement": 0.2604166666666667
+    },
+    {
+      "rank": 64,
+      "kept": 0.6666666666666666,
+      "agreement": 0.5625
+    },
+    {
+      "rank": 80,
+      "kept": 0.8333333333333334,
+      "agreement": 0.8072916666666666
+    },
+    {
+      "rank": 96,
+      "kept": 1.0,
+      "agreement": 1.0
+    }
+  ],
+  "code_commit": "76447f7+dirty",
+  "complete": true
+}

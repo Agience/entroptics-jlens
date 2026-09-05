@@ -1,0 +1,131 @@
+{
+  "model": "gpt2",
+  "d_model": 768,
+  "prompts": 6,
+  "target": 0.99,
+  "layers": [
+    {
+      "layer": 0,
+      "K_entroptics": 67,
+      "agreement_at_K": 0.3541666666666667,
+      "k_star": 736,
+      "energy90": 149,
+      "energy99": 478,
+      "j_rank_needed": 768,
+      "alpha": 0.2631118098894755,
+      "flop_ratio": 5.688888888888889
+    },
+    {
+      "layer": 1,
+      "K_entroptics": 64,
+      "agreement_at_K": 0.3411458333333333,
+      "k_star": 730,
+      "energy90": 189,
+      "energy99": 495,
+      "j_rank_needed": 768,
+      "alpha": 0.3749867081642151,
+      "flop_ratio": 5.953488372093023
+    },
+    {
+      "layer": 2,
+      "K_entroptics": 59,
+      "agreement_at_K": 0.30859375,
+      "k_star": 728,
+      "energy90": 226,
+      "energy99": 506,
+      "j_rank_needed": 768,
+      "alpha": 0.495184858640035,
+      "flop_ratio": 6.453781512605042
+    },
+    {
+      "layer": 3,
+      "K_entroptics": 55,
+      "agreement_at_K": 0.33203125,
+      "k_star": 725,
+      "energy90": 237,
+      "energy99": 504,
+      "j_rank_needed": 768,
+      "alpha": 0.5752544601758321,
+      "flop_ratio": 6.918918918918919
+    },
+    {
+      "layer": 4,
+      "K_entroptics": 52,
+      "agreement_at_K": 0.2643229166666667,
+      "k_star": 737,
+      "energy90": 235,
+      "energy99": 498,
+      "j_rank_needed": 768,
+      "alpha": 0.6794724464416504,
+      "flop_ratio": 7.314285714285714
+    },
+    {
+      "layer": 5,
+      "K_entroptics": 51,
+      "agreement_at_K": 0.24088541666666666,
+      "k_star": 737,
+      "energy90": 224,
+      "energy99": 489,
+      "j_rank_needed": 768,
+      "alpha": 0.8012975056966146,
+      "flop_ratio": 7.456310679611651
+    },
+    {
+      "layer": 6,
+      "K_entroptics": 48,
+      "agreement_at_K": 0.23567708333333334,
+      "k_star": 692,
+      "energy90": 228,
+      "energy99": 491,
+      "j_rank_needed": 768,
+      "alpha": 0.9356740315755209,
+      "flop_ratio": 7.917525773195877
+    },
+    {
+      "layer": 7,
+      "K_entroptics": 48,
+      "agreement_at_K": 0.2421875,
+      "k_star": 702,
+      "energy90": 221,
+      "energy99": 486,
+      "j_rank_needed": 768,
+      "alpha": 1.0241519610087078,
+      "flop_ratio": 7.917525773195877
+    },
+    {
+      "layer": 8,
+      "K_entroptics": 53,
+      "agreement_at_K": 0.3528645833333333,
+      "k_star": 737,
+      "energy90": 204,
+      "energy99": 477,
+      "j_rank_needed": 768,
+      "alpha": 1.1083171566327412,
+      "flop_ratio": 7.177570093457944
+    },
+    {
+      "layer": 9,
+      "K_entroptics": 46,
+      "agreement_at_K": 0.53515625,
+      "k_star": 717,
+      "energy90": 156,
+      "energy99": 448,
+      "j_rank_needed": 768,
+      "alpha": 1.1375641822814941,
+      "flop_ratio": 8.258064516129032
+    },
+    {
+      "layer": 10,
+      "K_entroptics": 39,
+      "agreement_at_K": 0.7005208333333334,
+      "k_star": 706,
+      "energy90": 3,
+      "energy99": 307,
+      "j_rank_needed": 768,
+      "alpha": 1.1122057437896729,
+      "flop_ratio": 9.721518987341772
+    }
+  ],
+  "code_commit": "76447f7+dirty",
+  "complete": true
+}

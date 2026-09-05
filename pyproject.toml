@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "entroptics-jlens"
+version = "0.1.1"
+description = "A Jacobian lens carries a large identity component at depth, and a noise floor derived from the matrix it judges is inflated by it. This measures both, exactly, from the checkpoint alone."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.10"
+authors = [{ name = "Ikailo John Sessford", email = "john@ikailo.com" }]
+keywords = ["interpretability", "jacobian-lens", "logit-lens", "effective-rank",
+            "residual-stream", "subspace", "entroptics"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = ["numpy>=2.0", "entroptics>=0.2.1"]
+
+[project.optional-dependencies]
+# Reading a published lens: the checkpoints are torch serializations and live on the Hub.
+lens = ["torch>=2.0", "huggingface_hub>=0.23", "safetensors>=0.4"]
+# Every tool the workflows invoke is declared here, so `pip install -e ".[dev]"` is enough to
+# reproduce any CI job locally: ruff for the lint step, build and twine for the packaging job.
+dev = ["pytest>=8", "torch>=2.0", "huggingface_hub>=0.23", "ruff>=0.6",
+       "build>=1.2", "twine>=5.0"]
+
+[project.scripts]
+entroptics-jlens = "entroptics_jlens.cli:main"
+
+[project.urls]
+Repository = "https://github.com/Agience/entroptics-jlens"
+Issues = "https://github.com/Agience/entroptics-jlens/issues"
+Engine = "https://pypi.org/project/entroptics/"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+# Pinned rather than inferred, so the lint runs against the floor the package declares. It is
+# what catches an f-string that only parses on 3.12, which `ast` cannot see because
+# `feature_version` gates the grammar and not the tokenizer.
+target-version = "py310"
+
+[tool.ruff.lint]
+# Stated rather than inherited. ruff's DEFAULT rule set changes between releases: this tree is
+# clean under 0.14.0's defaults and reports 200+ findings under 0.16.5's, across rules nobody
+# here chose (I001, RUF100, B023, UP006, BLE001...). With `ruff>=0.6` in `[dev]`, CI installs
+# whatever is newest, so the selection is stated rather than inherited from the release.
+# These four are what 0.14 defaulted to, so pinning them changes no finding today and keeps a
+# future release from changing what "lint clean" means. Identical under 0.14.0 and 0.16.5.
+#
+# It does NOT disable the syntax check: `invalid-syntax` is a parse failure rather than a rule,
+# and both versions still refuse an f-string that needs 3.12 under `target-version = "py310"`.
+# That check is load-bearing -- see `tests/test_python_floor.py`.
+select = ["E4", "E7", "E9", "F"]
+
+# E741 flags `l` as an ambiguous name. Here `l` is the layer index, in the package and in the
+# literature it reads, and every formula is closer to its source for keeping it.
+ignore = ["E741"]

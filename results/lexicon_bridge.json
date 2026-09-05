@@ -1,0 +1,199 @@
+{
+  "db": "D:/agience-data/shard/lattice.db",
+  "princeton_english": 117659,
+  "oewn": 120630,
+  "omw_rows": 437936,
+  "omw_languages": {
+    "bg": 4959,
+    "ca": 45826,
+    "el": 18049,
+    "es": 38512,
+    "eu": 29413,
+    "fi": 116763,
+    "gl": 19312,
+    "hr": 23120,
+    "id": 38085,
+    "is": 4951,
+    "it": 35001,
+    "iwn": 15563,
+    "sq": 4675,
+    "sv": 6796,
+    "zsm": 36911
+  },
+  "omw_keys": 117187,
+  "omw_ambiguous": 0,
+  "oewn_duplicate_ili": 1,
+  "paired": 116944,
+  "counts": {
+    "ili-absent-from-oewn": 243,
+    "exact": 114526,
+    "overlap": 2337,
+    "disjoint": 81,
+    "no-omw-key": 472
+  },
+  "by_pos": {
+    "n": {
+      "synsets": 82115,
+      "paired": 81914,
+      "exact": 79883,
+      "overlap": 1953,
+      "disjoint": 78
+    },
+    "v": {
+      "synsets": 13767,
+      "paired": 13681,
+      "exact": 13555,
+      "overlap": 124,
+      "disjoint": 2
+    },
+    "a": {
+      "synsets": 7463,
+      "paired": 7435,
+      "exact": 7401,
+      "overlap": 34,
+      "disjoint": 0
+    },
+    "s": {
+      "synsets": 10693,
+      "paired": 10340,
+      "exact": 10175,
+      "overlap": 164,
+      "disjoint": 1
+    },
+    "r": {
+      "synsets": 3621,
+      "paired": 3574,
+      "exact": 3512,
+      "overlap": 62,
+      "disjoint": 0
+    }
+  },
+  "renamed_examples": [
+    {
+      "princeton": "wn-able_seaman.n.01",
+      "princeton_lemmas": [
+        "able seaman",
+        "able-bodied seaman"
+      ],
+      "oewn": "wn-oewn-09775831-n",
+      "oewn_lemmas": [
+        "able-bodied sailor"
+      ]
+    },
+    {
+      "princeton": "wn-aircraftsman.n.01",
+      "princeton_lemmas": [
+        "aircraftman",
+        "aircraftsman"
+      ],
+      "oewn": "wn-oewn-09799988-n",
+      "oewn_lemmas": [
+        "aircraft officer"
+      ]
+    },
+    {
+      "princeton": "wn-aircrewman.n.01",
+      "princeton_lemmas": [
+        "aircrewman"
+      ],
+      "oewn": "wn-oewn-09800117-n",
+      "oewn_lemmas": [
+        "aircrew member"
+      ]
+    },
+    {
+      "princeton": "wn-alderman.n.01",
+      "princeton_lemmas": [
+        "alderman"
+      ],
+      "oewn": "wn-oewn-09801838-n",
+      "oewn_lemmas": [
+        "alderperson"
+      ]
+    },
+    {
+      "princeton": "wn-antonius_pius.n.01",
+      "princeton_lemmas": [
+        "antonius pius"
+      ],
+      "oewn": "wn-oewn-10839657-n",
+      "oewn_lemmas": [
+        "antoninus pius"
+      ]
+    },
+    {
+      "princeton": "wn-baggageman.n.01",
+      "princeton_lemmas": [
+        "baggageman"
+      ],
+      "oewn": "wn-oewn-09851898-n",
+      "oewn_lemmas": [
+        "baggage attendant"
+      ]
+    },
+    {
+      "princeton": "wn-bandsman.n.01",
+      "princeton_lemmas": [
+        "bandsman"
+      ],
+      "oewn": "wn-oewn-09856847-n",
+      "oewn_lemmas": [
+        "band player"
+      ]
+    },
+    {
+      "princeton": "wn-blond.n.01",
+      "princeton_lemmas": [
+        "blond",
+        "blonde"
+      ],
+      "oewn": "wn-oewn-09879912-n",
+      "oewn_lemmas": [
+        "blond person"
+      ]
+    },
+    {
+      "princeton": "wn-bondsman.n.02",
+      "princeton_lemmas": [
+        "bondsman",
+        "bondswoman"
+      ],
+      "oewn": "wn-oewn-09884685-n",
+      "oewn_lemmas": [
+        "bondsperson"
+      ]
+    },
+    {
+      "princeton": "wn-border_patrolman.n.01",
+      "princeton_lemmas": [
+        "border patrolman"
+      ],
+      "oewn": "wn-oewn-09886717-n",
+      "oewn_lemmas": [
+        "border patroller"
+      ]
+    },
+    {
+      "princeton": "wn-brakeman.n.01",
+      "princeton_lemmas": [
+        "brakeman"
+      ],
+      "oewn": "wn-oewn-09892601-n",
+      "oewn_lemmas": [
+        "brake worker"
+      ]
+    },
+    {
+      "princeton": "wn-bushman.n.02",
+      "princeton_lemmas": [
+        "bushman"
+      ],
+      "oewn": "wn-oewn-09900985-n",
+      "oewn_lemmas": [
+        "bushperson"
+      ]
+    }
+  ],
+  "code_commit": "76447f7+dirty",
+  "complete": true
+}

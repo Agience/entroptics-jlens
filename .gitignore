@@ -1,0 +1,86 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+*.egg-info/
+dist/
+build/
+.venv/
+# artefacts: lens checkpoints and run outputs are never committed
+*.pt
+*.safetensors
+out/
+results/*
+# The runs the paper and the experiment scripts cite by name. A citation a reader cannot
+# open is not provenance, and these total 1.5 MB against the directory's 32 MB.
+!results/affine.json
+!results/benefit.json
+!results/blend.json
+!results/complement_gemma31b_all_p8.json
+!results/complement_gemma31b_p8.json
+!results/complement_gpt2_p8.json
+!results/complement_pythia70m_p8.json
+!results/complement_qwen0.8b_p12.json
+!results/complement_qwen0.8b_p8.json
+!results/complement_qwen1.7b_p8.json
+!results/complement_qwen35_4b_p6.json
+!results/composition.json
+!results/concept_transport.json
+!results/context_handoff.json
+!results/coupling_control.json
+!results/coverage_gpt2.json
+!results/cross_tokenizer.json
+!results/delta_direction.json
+!results/depth.json
+!results/derived_early_exit.json
+!results/escalation.json
+!results/etendue_gpt2.json
+!results/etendue_pythia.json
+!results/fit_quality.json
+!results/fit_ranking.json
+!results/hidden_modes_reproduce.json
+!results/gain.json
+!results/grounding.json
+!results/kv_ceiling.json
+!results/lens_compression.json
+!results/lens_ranking.json
+!results/lexicon_bridge.json
+!results/prefix_handoff.json
+!results/prenorm_target.json
+!results/probe_placement.json
+!results/quantization_cost.json
+!results/quantization_damage.json
+!results/ranking_sensitivity.json
+!results/reach_4b.json
+!results/recalibrate.json
+!results/reversal_mechanism.json
+!results/second_model.json
+!results/selective.json
+!results/shared_basis.json
+!results/stream_compression.json
+!results/streams_qwen08_n12.json
+!results/structure_before_training.json
+!results/structure_free_control.json
+!results/subspace_retrieval.json
+!results/sweep_and_depth.json
+!results/the_claim.json
+!results/transport_specificity.json
+!results/twofit.json
+lenses/
+streams/
+# exp47's lemma map: 3.5 MB, regenerated deterministically from the tokenizer and
+# WordNet, so regenerating it destroys nothing. Generated data is not tracked.
+lemma_ids.npy
+lemma_table.json
+# exp46 caches: WordNet/tokenizer masks, regenerated deterministically.
+m_any.npy
+m_noun.npy
+m_sal.npy
+# collected residual streams: regenerated from a forward pass
+*.npz
+
+# Agent instructions: AGENTS.md is the source. The generated copies are not published.
+CLAUDE.md
+.github/copilot-instructions.md
+.vscode/
+.ruff_cache/

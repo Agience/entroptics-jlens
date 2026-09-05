@@ -1,0 +1,75 @@
+{
+  "model": "gpt2",
+  "bits": 4,
+  "baseline_loss": 4.157549222310384,
+  "layers": [
+    {
+      "layer": 0,
+      "agreement": 0.8669089835324821,
+      "loss_increase": 0.3680402636528015
+    },
+    {
+      "layer": 1,
+      "agreement": 0.37833107774296637,
+      "loss_increase": 0.006456295649210908
+    },
+    {
+      "layer": 2,
+      "agreement": 0.5849048511324962,
+      "loss_increase": 0.110352436701457
+    },
+    {
+      "layer": 3,
+      "agreement": 0.6674450600839206,
+      "loss_increase": 0.058843771616618135
+    },
+    {
+      "layer": 4,
+      "agreement": 0.7856071467969767,
+      "loss_increase": 0.0579619010289516
+    },
+    {
+      "layer": 5,
+      "agreement": 0.726336327824406,
+      "loss_increase": 0.03609295686086078
+    },
+    {
+      "layer": 6,
+      "agreement": 0.8506281278118959,
+      "loss_increase": 0.015283147493998506
+    },
+    {
+      "layer": 7,
+      "agreement": 0.7696117600875618,
+      "loss_increase": 0.00675018628438373
+    },
+    {
+      "layer": 8,
+      "agreement": 0.6502423450665822,
+      "loss_increase": 0.02559377749761005
+    },
+    {
+      "layer": 9,
+      "agreement": 0.7501738605697869,
+      "loss_increase": 0.013117849826812744
+    },
+    {
+      "layer": 10,
+      "agreement": 0.44291516470194353,
+      "loss_increase": 0.057727932929992676
+    },
+    {
+      "layer": 11,
+      "agreement": 0.3893039126906699,
+      "loss_increase": 0.08325453599294086
+    }
+  ],
+  "spearman": 0.06993006993006995,
+  "pearson": 0.26487608431862186,
+  "top_k_overlap": [
+    1,
+    3
+  ],
+  "code_commit": "9f7dd6f+dirty",
+  "complete": true
+}

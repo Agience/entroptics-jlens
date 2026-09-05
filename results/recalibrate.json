@@ -1,0 +1,1173 @@
+{
+  "pairs": [
+    {
+      "layer": 0,
+      "kind": "noise",
+      "strength": 0.02,
+      "gap": 2.557065368762169e-05,
+      "d_excess": 1.6971729202057417e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 0,
+      "kind": "noise",
+      "strength": 0.05,
+      "gap": 0.0013280715617245483,
+      "d_excess": 6.327869473576192e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 0,
+      "kind": "noise",
+      "strength": 0.1,
+      "gap": 0.00033922605026940147,
+      "d_excess": -0.00031489792040656495,
+      "correct": false,
+      "acc": {
+        "coverage": false,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 0,
+      "kind": "noise",
+      "strength": 0.2,
+      "gap": 0.00393260005435143,
+      "d_excess": 0.00046200512164175367,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 0,
+      "kind": "noise",
+      "strength": 0.4,
+      "gap": 0.016949909342685143,
+      "d_excess": 0.0024418926840942823,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 0,
+      "kind": "rank",
+      "strength": 0.05,
+      "gap": 5.27621326623059e-07,
+      "d_excess": 4.147682035257616e-07,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 0,
+      "kind": "rank",
+      "strength": 0.1,
+      "gap": 3.6185895949416733e-06,
+      "d_excess": 2.5992326833923496e-06,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 0,
+      "kind": "rank",
+      "strength": 0.25,
+      "gap": 7.949921929761866e-05,
+      "d_excess": 5.021538372812495e-06,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 0,
+      "kind": "rank",
+      "strength": 0.5,
+      "gap": 0.0007269883886968428,
+      "d_excess": 1.8454019190192184e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 0,
+      "kind": "rank",
+      "strength": 0.75,
+      "gap": 0.005215639196365297,
+      "d_excess": 0.0003438008056086128,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 4,
+      "kind": "noise",
+      "strength": 0.02,
+      "gap": 0.0001234869593108111,
+      "d_excess": -2.0146272036537793e-05,
+      "correct": false,
+      "acc": {
+        "coverage": false,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 4,
+      "kind": "noise",
+      "strength": 0.05,
+      "gap": 0.0011298500112497795,
+      "d_excess": 5.340497400665306e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 4,
+      "kind": "noise",
+      "strength": 0.1,
+      "gap": 0.0018285497765231958,
+      "d_excess": 4.575964949415923e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 4,
+      "kind": "noise",
+      "strength": 0.2,
+      "gap": 0.008295374879440298,
+      "d_excess": 0.000565855590618676,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 4,
+      "kind": "noise",
+      "strength": 0.4,
+      "gap": 0.030246558296359763,
+      "d_excess": 0.0015611441165909873,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 4,
+      "kind": "rank",
+      "strength": 0.1,
+      "gap": 1.299906737068014e-06,
+      "d_excess": 1.0419057174387847e-06,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 4,
+      "kind": "rank",
+      "strength": 0.25,
+      "gap": 2.620900544764571e-05,
+      "d_excess": 7.469620200095672e-06,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 4,
+      "kind": "rank",
+      "strength": 0.5,
+      "gap": 0.00030447363979901697,
+      "d_excess": 9.697582043428216e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 4,
+      "kind": "rank",
+      "strength": 0.75,
+      "gap": 0.00450768148906758,
+      "d_excess": 0.0006824530688255073,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 8,
+      "kind": "noise",
+      "strength": 0.05,
+      "gap": 0.00039447449662476656,
+      "d_excess": -1.2523208423605159e-05,
+      "correct": false,
+      "acc": {
+        "coverage": false,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 8,
+      "kind": "noise",
+      "strength": 0.1,
+      "gap": 0.0009346883768322992,
+      "d_excess": 0.00010735773478921101,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 8,
+      "kind": "noise",
+      "strength": 0.2,
+      "gap": 0.005510165179881836,
+      "d_excess": 0.00027125900834896327,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 8,
+      "kind": "noise",
+      "strength": 0.4,
+      "gap": 0.021771730992951068,
+      "d_excess": 0.0023290039760066397,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 8,
+      "kind": "rank",
+      "strength": 0.05,
+      "gap": 1.3558978742325393e-06,
+      "d_excess": 6.379424409910794e-07,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 8,
+      "kind": "rank",
+      "strength": 0.1,
+      "gap": 6.3357594072419425e-06,
+      "d_excess": 1.429945615090411e-06,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 8,
+      "kind": "rank",
+      "strength": 0.25,
+      "gap": 2.8022527332468802e-05,
+      "d_excess": 1.1619464819700998e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 8,
+      "kind": "rank",
+      "strength": 0.5,
+      "gap": 0.00044235277184157955,
+      "d_excess": 0.0001716839253154412,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 8,
+      "kind": "rank",
+      "strength": 0.75,
+      "gap": 0.006593629543206954,
+      "d_excess": 0.0020619007890714525,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 12,
+      "kind": "noise",
+      "strength": 0.02,
+      "gap": 0.00022608841770337218,
+      "d_excess": 4.7905995490440945e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 12,
+      "kind": "noise",
+      "strength": 0.05,
+      "gap": 0.0006419234050987944,
+      "d_excess": 5.9113422721676634e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 12,
+      "kind": "noise",
+      "strength": 0.1,
+      "gap": 0.0018797273591944074,
+      "d_excess": 0.00047134087259120827,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 12,
+      "kind": "noise",
+      "strength": 0.2,
+      "gap": 0.007988910511768647,
+      "d_excess": 0.00034077184715249065,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 12,
+      "kind": "noise",
+      "strength": 0.4,
+      "gap": 0.030002024916168078,
+      "d_excess": 0.0026198603103969875,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 12,
+      "kind": "rank",
+      "strength": 0.1,
+      "gap": 6.063344017302733e-06,
+      "d_excess": 4.669514607175129e-06,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 12,
+      "kind": "rank",
+      "strength": 0.25,
+      "gap": 4.83705379339568e-05,
+      "d_excess": 7.077959136084222e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 12,
+      "kind": "rank",
+      "strength": 0.5,
+      "gap": 0.0011662296167550613,
+      "d_excess": 0.0009236165157121556,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 12,
+      "kind": "rank",
+      "strength": 0.75,
+      "gap": 0.017197407027467467,
+      "d_excess": 0.009201887439919593,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 16,
+      "kind": "noise",
+      "strength": 0.02,
+      "gap": 0.00020717311365025588,
+      "d_excess": 8.56142666354337e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 16,
+      "kind": "noise",
+      "strength": 0.05,
+      "gap": 0.000487228868416409,
+      "d_excess": 0.00013529686132110474,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 16,
+      "kind": "noise",
+      "strength": 0.1,
+      "gap": 0.002513678141448595,
+      "d_excess": 0.00039448475049790044,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 16,
+      "kind": "noise",
+      "strength": 0.2,
+      "gap": 0.010333733502285183,
+      "d_excess": 0.0012910969689978458,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 16,
+      "kind": "noise",
+      "strength": 0.4,
+      "gap": 0.03434839479147158,
+      "d_excess": 0.004524855059299768,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 16,
+      "kind": "rank",
+      "strength": 0.05,
+      "gap": 5.263060982833267e-06,
+      "d_excess": 5.553056136115009e-06,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 16,
+      "kind": "rank",
+      "strength": 0.1,
+      "gap": 3.126853061902921e-05,
+      "d_excess": 4.100261863664023e-05,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 16,
+      "kind": "rank",
+      "strength": 0.25,
+      "gap": 0.0003759471130572453,
+      "d_excess": 0.0006528789619169445,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 16,
+      "kind": "rank",
+      "strength": 0.5,
+      "gap": 0.005488239316474162,
+      "d_excess": 0.004930435815908407,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 16,
+      "kind": "rank",
+      "strength": 0.75,
+      "gap": 0.03633463518315045,
+      "d_excess": 0.02577131051897391,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 20,
+      "kind": "noise",
+      "strength": 0.02,
+      "gap": 0.0001574895519665483,
+      "d_excess": 8.076958792541111e-06,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 20,
+      "kind": "noise",
+      "strength": 0.05,
+      "gap": 0.0006419916178056457,
+      "d_excess": 0.0002244500810383021,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 20,
+      "kind": "noise",
+      "strength": 0.1,
+      "gap": 0.0032821855193843567,
+      "d_excess": 0.0012014848627106278,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 20,
+      "kind": "noise",
+      "strength": 0.2,
+      "gap": 0.012713052337154737,
+      "d_excess": 0.003451687311670837,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 20,
+      "kind": "noise",
+      "strength": 0.4,
+      "gap": 0.0486042202992638,
+      "d_excess": 0.01230295037466822,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 20,
+      "kind": "rank",
+      "strength": 0.05,
+      "gap": 0.0003021641653638783,
+      "d_excess": 0.0004292810320821461,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 20,
+      "kind": "rank",
+      "strength": 0.1,
+      "gap": 0.0014306561569929154,
+      "d_excess": 0.0018918261536526593,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 20,
+      "kind": "rank",
+      "strength": 0.25,
+      "gap": 0.008348841124566131,
+      "d_excess": 0.0112746513287737,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 20,
+      "kind": "rank",
+      "strength": 0.5,
+      "gap": 0.037420650657133035,
+      "d_excess": 0.047147783541616875,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 20,
+      "kind": "rank",
+      "strength": 0.75,
+      "gap": 0.10403267945093057,
+      "d_excess": 0.10382426516789979,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 24,
+      "kind": "noise",
+      "strength": 0.02,
+      "gap": 0.00012478880307961125,
+      "d_excess": -3.6440109725977e-05,
+      "correct": false,
+      "acc": {
+        "coverage": false,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 24,
+      "kind": "noise",
+      "strength": 0.05,
+      "gap": 0.001108591885776353,
+      "d_excess": 0.0004479306943702688,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 24,
+      "kind": "noise",
+      "strength": 0.1,
+      "gap": 0.004372398769168198,
+      "d_excess": 0.0021898183829960893,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 24,
+      "kind": "noise",
+      "strength": 0.2,
+      "gap": 0.015981249097145985,
+      "d_excess": 0.0037720142178814253,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 24,
+      "kind": "noise",
+      "strength": 0.4,
+      "gap": 0.06012355808343309,
+      "d_excess": 0.023845336021455915,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 24,
+      "kind": "rank",
+      "strength": 0.05,
+      "gap": 0.00138756991183284,
+      "d_excess": 0.0021720428792718627,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 24,
+      "kind": "rank",
+      "strength": 0.1,
+      "gap": 0.005855296326393085,
+      "d_excess": 0.008983451603371995,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 24,
+      "kind": "rank",
+      "strength": 0.25,
+      "gap": 0.028325371188520455,
+      "d_excess": 0.040003703778785205,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 24,
+      "kind": "rank",
+      "strength": 0.5,
+      "gap": 0.09407619089528607,
+      "d_excess": 0.11561720555280625,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 24,
+      "kind": "rank",
+      "strength": 0.75,
+      "gap": 0.18685082937617933,
+      "d_excess": 0.19581238663216738,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 28,
+      "kind": "noise",
+      "strength": 0.02,
+      "gap": 0.00022822512513950429,
+      "d_excess": -9.37651452259658e-06,
+      "correct": false,
+      "acc": {
+        "coverage": false,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 28,
+      "kind": "noise",
+      "strength": 0.05,
+      "gap": 0.0011194586779740348,
+      "d_excess": 0.0007678047734330784,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 28,
+      "kind": "noise",
+      "strength": 0.1,
+      "gap": 0.004454169593505061,
+      "d_excess": 0.0031478182494072415,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 28,
+      "kind": "noise",
+      "strength": 0.2,
+      "gap": 0.01860803960921128,
+      "d_excess": 0.002881938204186474,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 28,
+      "kind": "noise",
+      "strength": 0.4,
+      "gap": 0.06760706840736729,
+      "d_excess": 0.04436849989441044,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": false,
+        "norm_ratio": false
+      }
+    },
+    {
+      "layer": 28,
+      "kind": "rank",
+      "strength": 0.05,
+      "gap": 0.0025766210081954633,
+      "d_excess": 0.006206033911698772,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 28,
+      "kind": "rank",
+      "strength": 0.1,
+      "gap": 0.010385674561109328,
+      "d_excess": 0.020942713231784538,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 28,
+      "kind": "rank",
+      "strength": 0.25,
+      "gap": 0.04584875689150904,
+      "d_excess": 0.07835875594681663,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 28,
+      "kind": "rank",
+      "strength": 0.5,
+      "gap": 0.12839764394728162,
+      "d_excess": 0.18073171215666836,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    },
+    {
+      "layer": 28,
+      "kind": "rank",
+      "strength": 0.75,
+      "gap": 0.2414851161242883,
+      "d_excess": 0.28514986362922196,
+      "correct": true,
+      "acc": {
+        "coverage": true,
+        "participation": true,
+        "norm_ratio": true
+      }
+    }
+  ],
+  "rows": [
+    {
+      "kind": "noise",
+      "strength": 0.02,
+      "gap": 0.00015611751779110353,
+      "acc": {
+        "coverage": 0.5714285714285714,
+        "participation": 0.42857142857142855,
+        "norm_ratio": 0.2857142857142857
+      },
+      "n": 7,
+      "p": 1.0
+    },
+    {
+      "kind": "noise",
+      "strength": 0.05,
+      "gap": 0.0008564488155837914,
+      "acc": {
+        "coverage": 0.875,
+        "participation": 0.75,
+        "norm_ratio": 0.0
+      },
+      "n": 8,
+      "p": 0.0703125
+    },
+    {
+      "kind": "noise",
+      "strength": 0.1,
+      "gap": 0.0024505779482906897,
+      "acc": {
+        "coverage": 0.875,
+        "participation": 0.375,
+        "norm_ratio": 0.0
+      },
+      "n": 8,
+      "p": 0.0703125
+    },
+    {
+      "kind": "noise",
+      "strength": 0.2,
+      "gap": 0.010420390646404924,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.5,
+        "norm_ratio": 0.0
+      },
+      "n": 8,
+      "p": 0.0078125
+    },
+    {
+      "kind": "noise",
+      "strength": 0.4,
+      "gap": 0.03870668314121247,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.5,
+        "norm_ratio": 0.0
+      },
+      "n": 8,
+      "p": 0.0078125
+    },
+    {
+      "kind": "rank",
+      "strength": 0.05,
+      "gap": 0.0007122502775959784,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.3333333333333333,
+        "norm_ratio": 1.0
+      },
+      "n": 6,
+      "p": 0.03125
+    },
+    {
+      "kind": "rank",
+      "strength": 0.1,
+      "gap": 0.0022150266468588635,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.5,
+        "norm_ratio": 1.0
+      },
+      "n": 8,
+      "p": 0.0078125
+    },
+    {
+      "kind": "rank",
+      "strength": 0.25,
+      "gap": 0.010385127200958069,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.625,
+        "norm_ratio": 1.0
+      },
+      "n": 8,
+      "p": 0.0078125
+    },
+    {
+      "kind": "rank",
+      "strength": 0.5,
+      "gap": 0.03350284615415842,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.875,
+        "norm_ratio": 1.0
+      },
+      "n": 8,
+      "p": 0.0078125
+    },
+    {
+      "kind": "rank",
+      "strength": 0.75,
+      "gap": 0.07527720217383199,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.875,
+        "norm_ratio": 1.0
+      },
+      "n": 8,
+      "p": 0.0078125
+    }
+  ],
+  "bins": [
+    {
+      "lo": 0.0,
+      "hi": 0.001,
+      "acc": 0.8863636363636364,
+      "n": 44,
+      "p": 1.4051624930289108e-07
+    },
+    {
+      "lo": 0.001,
+      "hi": 0.002,
+      "acc": 1.0,
+      "n": 4,
+      "p": 0.125
+    },
+    {
+      "lo": 0.002,
+      "hi": 0.005,
+      "acc": 1.0,
+      "n": 12,
+      "p": 0.00048828125
+    },
+    {
+      "lo": 0.005,
+      "hi": 0.01,
+      "acc": 1.0,
+      "n": 3,
+      "p": 0.25
+    },
+    {
+      "lo": 0.01,
+      "hi": 0.02,
+      "acc": 1.0,
+      "n": 2,
+      "p": 0.5
+    },
+    {
+      "lo": 0.02,
+      "hi": null,
+      "acc": 1.0,
+      "n": 12,
+      "p": 0.00048828125
+    }
+  ],
+  "threshold": 0.0,
+  "complete": true
+}

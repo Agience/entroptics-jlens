@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it."
+title: "The identity component of a Jacobian lens inflates the noise floor computed from it"
+abstract: "A transformer's residual stream adds each layer's output to what came before, so a corpus-averaged Jacobian lens contains a copy of the identity by construction, and its share grows with depth: at the deepest fitted layer of the six lenses read here from models above 1B parameters it is 66% to 88% of the matrix. A derived Marchenko-Pastur / Tracy-Widom floor estimates its variance as a median row energy, and an added identity contributes to every row -- the one contribution a median over rows cannot reject -- so the identity raises the floor computed from it by more than 2x on eight of ten lenses and by up to 4.8x. Separating them is closed form: alpha = tr(J)/d is the orthogonal projection onto span(I), a trace and a subtraction with no threshold in it. Reading the residual transport in place of the raw one changes the resolved count by 2x to 21x across all eleven lens files read, ten of the twenty-two on the Neuronpedia mirror. Most of that range is not a property of transformers: two structure-free surrogates bracket the part that belongs to the transport -- one holding the spectrum and alpha, one holding the spectrum, alpha and every row norm, which is the floor's own variance input -- and the excess lies between 1.15x and 1.87x. The directions below the raw read's floor are reproducible -- across two independent fits they name the same vocabulary at 0.390 Jaccard against 0.038 for random directions decoded the same way -- though the agreement decays smoothly with mode index and marks no boundary. The repository holds the paper, the implementation, and the experiments that produce every figure from published lens files."
+type: software
+authors:
+  - given-names: Ikailo John
+    family-names: Sessford
+    email: john@ikailo.com
+    affiliation: Ikailo
+repository-code: "https://github.com/Agience/entroptics-jlens"
+url: "https://agience.ai"
+license: Apache-2.0
+# The concept DOI. It resolves to the newest deposit, which is what a citation should point
+# at; each release also gets its own version DOI, and naming one here would go stale on the
+# next deposit.
+doi: "10.5281/zenodo.22293929"
+version: 0.1.1
+date-released: "2026-09-04"
+keywords:
+  - interpretability
+  - jacobian lens
+  - logit lens
+  - residual stream
+  - effective rank
+  - skip connection
+  - singular value decomposition
+  - random matrix theory
+  - entroptics
+references:
+  - type: software
+    title: "Entroptics"
+    abstract: "Read any 2-D signal as a finite optical aperture whose resolution is fixed by the signal's own entropy."
+    authors:
+      - given-names: Ikailo John
+        family-names: Sessford
+        affiliation: Ikailo
+    version: 0.2.1
+    doi: "10.5281/zenodo.21273400"
+    repository-code: "https://github.com/Agience/entroptics"
+    license: Apache-2.0

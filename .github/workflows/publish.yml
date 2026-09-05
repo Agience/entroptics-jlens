@@ -1,0 +1,47 @@
+name: publish
+
+# Publishes to PyPI through Trusted Publishing: PyPI is configured to accept an OIDC token minted
+# for this repository, this workflow file and the `pypi` environment, so no API token is stored
+# anywhere. The three names below must match that configuration exactly or PyPI refuses the upload.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      # `id-token: write` is what lets the runner mint the OIDC token PyPI checks. Without it the
+      # upload fails with an authentication error rather than a permissions one.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          # The floor the package declares, so the sdist is built where it claims to work.
+          python-version: "3.10"
+
+      - run: pip install -e ".[dev]"
+
+      # The artifact is what gets published, so it is tested rather than the working tree: the
+      # suite ships inside the sdist and skips the modules whose repository files are not part of
+      # a distribution.
+      - run: python -m pytest -q
+      - run: python -m build
+      - run: python -m twine check dist/*
+      - run: mkdir sdist && tar xzf dist/entroptics_jlens-*.tar.gz -C sdist --strip-components=1
+      - run: pip install --force-reinstall dist/entroptics_jlens-*.tar.gz
+      - run: python -m pytest -q
+        working-directory: sdist
+
+      # A version already on PyPI cannot be replaced, so a re-run of this workflow must not fail
+      # the release. `skip-existing` makes the second run a no-op instead.
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true

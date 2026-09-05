@@ -1,0 +1,63 @@
+{
+  "sender": "gpt2",
+  "receiver": "EleutherAI/pythia-70m-deduped",
+  "entries": 20,
+  "targets": 8,
+  "alone": {
+    "0": 0.2701908316579717,
+    "1": 0.457562514992402,
+    "2": 0.4605369085422377,
+    "3": 0.4654175789627885,
+    "4": 0.35109607362729883,
+    "5": 0.36562388847883254,
+    "6": 0.38635687018102777,
+    "7": 0.3902266172160919
+  },
+  "rows": [
+    {
+      "n": 1,
+      "retention": 1.0,
+      "retention_shuffled": 1.0,
+      "retention_orthogonal": 1.0,
+      "raw_selectivity": 0.3933764104573314
+    },
+    {
+      "n": 2,
+      "retention": 0.7303927551064402,
+      "retention_shuffled": 0.7073114976402104,
+      "retention_orthogonal": 0.6555233900823731,
+      "raw_selectivity": 0.299556008678475
+    },
+    {
+      "n": 4,
+      "retention": 0.7322873756293367,
+      "retention_shuffled": 0.5337610910280218,
+      "retention_orthogonal": 0.5984405470189402,
+      "raw_selectivity": 0.28602628153853926
+    },
+    {
+      "n": 8,
+      "retention": 0.5983042843267501,
+      "retention_shuffled": 0.33740542837186205,
+      "retention_orthogonal": 0.3083203270180467,
+      "raw_selectivity": 0.23171186424965529
+    },
+    {
+      "n": 16,
+      "retention": 0.5770824081851279,
+      "retention_shuffled": 0.2193798480828678,
+      "retention_orthogonal": 0.16506889063127642,
+      "raw_selectivity": 0.22887744371770066
+    },
+    {
+      "n": 20,
+      "retention": 0.5542152680337031,
+      "retention_shuffled": 0.13995646959402525,
+      "retention_orthogonal": 0.13333097120391313,
+      "raw_selectivity": 0.22059181555774948
+    }
+  ],
+  "code_commit": "76447f7+dirty",
+  "complete": true,
+  "withdrawn": "WITHDRAWN 2026-08-22bh: measured through a write later shown to be inert (the direction was set by its padding draw, 2026-08-22bb). Composition FAILS at the embedding: retention collapses at n=2 and stays below the 1/n floor, replicated 2026-08-23b."
+}

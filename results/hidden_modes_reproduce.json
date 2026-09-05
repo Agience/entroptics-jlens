@@ -1,0 +1,118 @@
+{
+  "layer": 30,
+  "K_J": 25,
+  "K_M": 183,
+  "per": 20,
+  "rows": [
+    {
+      "upto": 25,
+      "jaccard": 0.6182741116751269,
+      "n_a": 794,
+      "n_b": 800,
+      "label": "resolved without the correction"
+    },
+    {
+      "upto": 104,
+      "jaccard": 0.5095148753685339,
+      "n_a": 2833,
+      "n_b": 2799,
+      "label": "inside the identity-free floor"
+    },
+    {
+      "upto": 183,
+      "jaccard": 0.41801351748457244,
+      "n_a": 4856,
+      "n_b": 4795,
+      "label": "inside the identity-free floor"
+    },
+    {
+      "upto": 366,
+      "jaccard": 0.3205042689434365,
+      "n_a": 9912,
+      "n_b": 9885,
+      "label": "past the floor"
+    },
+    {
+      "upto": 732,
+      "jaccard": 0.2926380176637643,
+      "n_a": 20674,
+      "n_b": 20746,
+      "label": "past the floor"
+    },
+    {
+      "block": "25..183",
+      "jaccard": 0.3688413183826028,
+      "chance": 0.007863019838017337,
+      "n_a": 4062,
+      "n_b": 3995,
+      "label": "hidden by the identity, alone"
+    },
+    {
+      "block": "183..366",
+      "jaccard": 0.18100337562565474,
+      "chance": 0.010553425277762351,
+      "n_a": 5056,
+      "n_b": 5090,
+      "label": "past the floor, alone"
+    },
+    {
+      "label": "block sweep",
+      "width": 158,
+      "blocks": [
+        {
+          "lo": 25,
+          "hi": 183,
+          "mid": 104.0,
+          "jaccard": 0.38976637051661733
+        },
+        {
+          "lo": 183,
+          "hi": 341,
+          "mid": 262.0,
+          "jaccard": 0.23428016508861374
+        },
+        {
+          "lo": 341,
+          "hi": 499,
+          "mid": 420.0,
+          "jaccard": 0.17769852092730515
+        },
+        {
+          "lo": 499,
+          "hi": 657,
+          "mid": 578.0,
+          "jaccard": 0.14863797868140544
+        },
+        {
+          "lo": 657,
+          "hi": 815,
+          "mid": 736.0,
+          "jaccard": 0.1318649330487095
+        },
+        {
+          "lo": 815,
+          "hi": 973,
+          "mid": 894.0,
+          "jaccard": 0.1226009739329705
+        },
+        {
+          "lo": 973,
+          "hi": 1131,
+          "mid": 1052.0,
+          "jaccard": 0.11796629534418737
+        }
+      ],
+      "power_law": {
+        "exponent": -0.504155382988584,
+        "r2": 0.9877904381060633,
+        "predicted": 0.36329503069065966,
+        "observed": 0.38976637051661733,
+        "excess_pct": 7.286457999613449
+      },
+      "decoded_null": {
+        "100": 0.03762135922330097,
+        "158": 0.05435071257856068
+      }
+    }
+  ]
+}

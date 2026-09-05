@@ -1,0 +1,246 @@
+{
+  "model": "Qwen/Qwen3.5-0.8B",
+  "dev": 40,
+  "test": 200,
+  "surface": 2580,
+  "ontology_tokens": 534,
+  "dev_baseline": {
+    "rank1": 0.375,
+    "rank10": 0.725,
+    "mrr": 0.46613038078981345,
+    "median": 3.0,
+    "choice": 0.9
+  },
+  "grid": [
+    {
+      "where": "prefix",
+      "layer": 3,
+      "amp": 0.25,
+      "rank1": 0.375,
+      "rank10": 0.725,
+      "mrr": 0.46613347133778593,
+      "median": 3.0,
+      "choice": 0.9
+    },
+    {
+      "where": "prefix",
+      "layer": 3,
+      "amp": 0.5,
+      "rank1": 0.375,
+      "rank10": 0.725,
+      "mrr": 0.4701987907426197,
+      "median": 3.0,
+      "choice": 0.9
+    },
+    {
+      "where": "prefix",
+      "layer": 8,
+      "amp": 0.25,
+      "rank1": 0.375,
+      "rank10": 0.725,
+      "mrr": 0.4665486953273206,
+      "median": 3.0,
+      "choice": 0.9
+    },
+    {
+      "where": "prefix",
+      "layer": 8,
+      "amp": 0.5,
+      "rank1": 0.375,
+      "rank10": 0.725,
+      "mrr": 0.4671592281348496,
+      "median": 3.0,
+      "choice": 0.9
+    },
+    {
+      "where": "prefix",
+      "layer": 13,
+      "amp": 0.25,
+      "rank1": 0.375,
+      "rank10": 0.725,
+      "mrr": 0.466565020465204,
+      "median": 3.0,
+      "choice": 0.9
+    },
+    {
+      "where": "prefix",
+      "layer": 13,
+      "amp": 0.5,
+      "rank1": 0.375,
+      "rank10": 0.725,
+      "mrr": 0.46656566602593086,
+      "median": 3.0,
+      "choice": 0.9
+    },
+    {
+      "where": "span",
+      "layer": 3,
+      "amp": 0.25,
+      "rank1": 0.325,
+      "rank10": 0.675,
+      "mrr": 0.4440889634656394,
+      "median": 3.0,
+      "choice": 0.9
+    },
+    {
+      "where": "span",
+      "layer": 3,
+      "amp": 0.5,
+      "rank1": 0.3,
+      "rank10": 0.625,
+      "mrr": 0.4172818536779128,
+      "median": 3.5,
+      "choice": 0.875
+    },
+    {
+      "where": "span",
+      "layer": 8,
+      "amp": 0.25,
+      "rank1": 0.325,
+      "rank10": 0.65,
+      "mrr": 0.43655247967789207,
+      "median": 3.5,
+      "choice": 0.9
+    },
+    {
+      "where": "span",
+      "layer": 8,
+      "amp": 0.5,
+      "rank1": 0.175,
+      "rank10": 0.625,
+      "mrr": 0.31563374278285233,
+      "median": 5.0,
+      "choice": 0.925
+    },
+    {
+      "where": "span",
+      "layer": 13,
+      "amp": 0.25,
+      "rank1": 0.325,
+      "rank10": 0.65,
+      "mrr": 0.43721020846169845,
+      "median": 4.0,
+      "choice": 0.9
+    },
+    {
+      "where": "span",
+      "layer": 13,
+      "amp": 0.5,
+      "rank1": 0.25,
+      "rank10": 0.65,
+      "mrr": 0.37023395898367134,
+      "median": 4.0,
+      "choice": 0.875
+    },
+    {
+      "where": "final",
+      "layer": 3,
+      "amp": 0.25,
+      "rank1": 0.375,
+      "rank10": 0.725,
+      "mrr": 0.46654997346491756,
+      "median": 3.0,
+      "choice": 0.9
+    },
+    {
+      "where": "final",
+      "layer": 3,
+      "amp": 0.5,
+      "rank1": 0.375,
+      "rank10": 0.725,
+      "mrr": 0.4666061466422093,
+      "median": 3.0,
+      "choice": 0.9
+    },
+    {
+      "where": "final",
+      "layer": 8,
+      "amp": 0.25,
+      "rank1": 0.375,
+      "rank10": 0.725,
+      "mrr": 0.46381829938925073,
+      "median": 3.5,
+      "choice": 0.9
+    },
+    {
+      "where": "final",
+      "layer": 8,
+      "amp": 0.5,
+      "rank1": 0.35,
+      "rank10": 0.725,
+      "mrr": 0.4492322417820864,
+      "median": 3.5,
+      "choice": 0.9
+    },
+    {
+      "where": "final",
+      "layer": 13,
+      "amp": 0.25,
+      "rank1": 0.35,
+      "rank10": 0.75,
+      "mrr": 0.45415726109204774,
+      "median": 3.5,
+      "choice": 0.9
+    },
+    {
+      "where": "final",
+      "layer": 13,
+      "amp": 0.5,
+      "rank1": 0.325,
+      "rank10": 0.725,
+      "mrr": 0.43112093594870676,
+      "median": 4.0,
+      "choice": 0.925
+    }
+  ],
+  "chosen": {
+    "where": "prefix",
+    "layer": 3,
+    "amp": 0.5,
+    "rank1": 0.375,
+    "rank10": 0.725,
+    "mrr": 0.4701987907426197,
+    "median": 3.0,
+    "choice": 0.9
+  },
+  "arms": {
+    "base": {
+      "rank1": 0.2,
+      "rank10": 0.53,
+      "mrr": 0.30899126656742754,
+      "median": 8.0,
+      "choice": 0.865
+    },
+    "inject": {
+      "rank1": 0.19,
+      "rank10": 0.535,
+      "mrr": 0.3054218107849388,
+      "median": 8.0,
+      "choice": 0.865
+    },
+    "shuffled": {
+      "rank1": 0.19,
+      "rank10": 0.535,
+      "mrr": 0.30420785207331863,
+      "median": 9.0,
+      "choice": 0.865
+    },
+    "wrong": {
+      "rank1": 0.19,
+      "rank10": 0.54,
+      "mrr": 0.3045489231606019,
+      "median": 8.5,
+      "choice": 0.86
+    },
+    "prompt_text": {
+      "rank1": 0.14,
+      "rank10": 0.405,
+      "mrr": 0.22842208534506303,
+      "median": 18.5,
+      "choice": 0.815
+    }
+  },
+  "code_commit": "76447f7+dirty",
+  "complete": true,
+  "withdrawn": "WITHDRAWN: the write was at depth, which installs nothing (2026-08-22be), and the direction was padding noise (2026-08-22bb). Superseded by the sealed result 2026-08-23d."
+}

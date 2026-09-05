@@ -1,0 +1,47 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.10 is the floor pyproject declares. It is in the matrix because two shipped scripts
+        # once used f-string syntax that only parses on 3.12, and no test could see it while every
+        # runner was newer than the floor being claimed.
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]"
+      - run: python -m pytest -q
+      - run: python -m ruff check src tests research/experiments
+
+  # The job above tests the working tree, which is not the thing anyone installs. setuptools
+  # ships `tests/` in the sdist but not the repository files those tests read -- the paper,
+  # research/experiments/, this workflow -- so each such module skips when its file is absent.
+  # This job runs the suite from an unpacked sdist, which is what keeps those skips complete.
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          # The floor, so the artifact is exercised where it claims to work.
+          python-version: "3.10"
+      - run: pip install -e ".[dev]"
+      - run: python -m build
+      - run: python -m twine check dist/*
+      - run: mkdir sdist && tar xzf dist/entroptics_jlens-*.tar.gz -C sdist --strip-components=1
+      # Not editable, and from the sdist rather than the checkout, so what runs below is the
+      # package a user would get rather than the repository it was cut from.
+      - run: pip install --force-reinstall dist/entroptics_jlens-*.tar.gz
+      - run: python -m pytest -q
+        working-directory: sdist

@@ -1,0 +1,38 @@
+{
+  "title": "The identity component of a Jacobian lens inflates the noise floor computed from it",
+  "description": "A transformer's residual stream adds each layer's output to what came before, so the corpus-averaged Jacobian lens J = E[dh_final/dh_l] contains a copy of the identity by construction, and its share grows with depth as less transformation remains above the layer: at the deepest fitted layer of the six lenses read here from models above 1B parameters it is 66% to 88% of the matrix. That matters for any spectral read whose threshold is derived from the frame it is judging. A finite-size Marchenko-Pastur / Tracy-Widom edge estimates its variance as a de-biased median row energy, and an added alpha*I contributes alpha^2 to every row -- the one contribution a median over rows cannot reject -- so the identity raises the floor computed from it by more than 2x on eight of the ten lenses and by up to 4.8x, and the modes in between fall under the line. Separating the two is exact and closed form: alpha = tr(J)/d is the orthogonal projection of J onto span(I) under the Frobenius inner product, a trace and a subtraction with no threshold in it. Reading J - alpha*I in place of J changes the resolved count by 2x to 21x across all eleven lens files read - ten of the twenty-two on the Neuronpedia mirror - in 9 of 10 models, five families, widths 512 to 4096. Most of that range is not a property of transformers: two structure-free surrogates measure the part that belongs to the transport, differing in whether the floor's own variance input (a median row energy) is held fixed: one redraws both subspaces at fixed spectrum and alpha, the other rotates at fixed spectrum, alpha and every row norm, preserved to 2e-16. The excess attributable to the transport lies between 1.15x and 1.87x, and the correlation with identity share behaves the same way on the surrogates (+0.745 real, +0.758 and +0.657 surrogate). The directions below the raw read's floor are reproducible: across the two independent fits of Qwen3.5-4B they name the same vocabulary at Jaccard 0.390, against 0.038 for random directions decoded through the same readout. That agreement decays as a smooth power law in mode index with no knee at the floor, so it establishes that reproducible structure extends well past the raw count rather than that it stops at the residual one. Below relative depth 0.6 the two reads agree. Built on the Entroptics instrument, which it consumes as an engine rather than reimplementing. Includes the paper, the implementation, and the experiments that reproduce every figure from published lens files.",
+  "upload_type": "software",
+  "license": "Apache-2.0",
+  "creators": [
+    {
+      "name": "Sessford, Ikailo John",
+      "affiliation": "Ikailo Inc."
+    }
+  ],
+  "keywords": [
+    "interpretability",
+    "jacobian lens",
+    "logit lens",
+    "residual stream",
+    "effective rank",
+    "skip connection",
+    "singular value decomposition",
+    "random matrix theory",
+    "Marchenko-Pastur",
+    "Tracy-Widom",
+    "entroptics"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Agience/entroptics-jlens",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.5281/zenodo.21273400",
+      "relation": "isDerivedFrom",
+      "scheme": "doi"
+    }
+  ],
+  "version": "0.1.1"
+}

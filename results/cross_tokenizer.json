@@ -1,0 +1,43 @@
+{
+  "sender": "gpt2",
+  "receiver": "EleutherAI/pythia-70m-deduped",
+  "d_sender": 768,
+  "d_receiver": 512,
+  "vocab_sender": 50257,
+  "vocab_receiver": 50277,
+  "shared_strings": 36938,
+  "crossing_size": 4096,
+  "layer": 6,
+  "inject": 2,
+  "alpha": 1.0,
+  "positions": 512,
+  "stats": {
+    "crossed": {
+      "mean": 0.1465690195438617,
+      "lo": 0.13359775551441597,
+      "hi": 0.16106459217626715
+    },
+    "shuffled": {
+      "mean": -0.18948178196746607,
+      "lo": -0.19779295599662453,
+      "hi": -0.1816367748396162
+    },
+    "random": {
+      "mean": -0.10748527629332363,
+      "lo": -0.11678343933456964,
+      "hi": -0.0972762848111985
+    },
+    "crossed_minus_shuffled": {
+      "mean": 0.3360508015113277,
+      "lo": 0.32684605562607233,
+      "hi": 0.3450217630959933
+    },
+    "crossed_minus_random": {
+      "mean": 0.2540542958371853,
+      "lo": 0.24661741815744823,
+      "hi": 0.26190136264578806
+    }
+  },
+  "code_commit": "76447f7+dirty",
+  "complete": true
+}

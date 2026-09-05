@@ -1,0 +1,115 @@
+{
+  "far": 0.05,
+  "lenses": [
+    {
+      "model": "gemma-3-1b",
+      "d_model": 1152,
+      "layer": 24,
+      "identity_energy": 0.6596027075432098,
+      "K_raw": 17,
+      "K_decomposed": 64,
+      "understatement": 3.764705882352941
+    },
+    {
+      "model": "gemma-3-270m",
+      "d_model": 640,
+      "layer": 16,
+      "identity_energy": 0.10745481577559442,
+      "K_raw": 39,
+      "K_decomposed": 42,
+      "understatement": 1.0769230769230769
+    },
+    {
+      "model": "gemma-3-4b",
+      "d_model": 2560,
+      "layer": 32,
+      "identity_energy": 0.7033864753400646,
+      "K_raw": 16,
+      "K_decomposed": 165,
+      "understatement": 10.3125
+    },
+    {
+      "model": "gpt2-small",
+      "d_model": 768,
+      "layer": 10,
+      "identity_energy": 0.4222514534737372,
+      "K_raw": 6,
+      "K_decomposed": 39,
+      "understatement": 6.5
+    },
+    {
+      "model": "llama3.1-8b",
+      "d_model": 4096,
+      "layer": 30,
+      "identity_energy": 0.720247662808105,
+      "K_raw": 74,
+      "K_decomposed": 269,
+      "understatement": 3.635135135135135
+    },
+    {
+      "model": "pythia-70m-deduped",
+      "d_model": 512,
+      "layer": 4,
+      "identity_energy": 0.4582923966893682,
+      "K_raw": 2,
+      "K_decomposed": 4,
+      "understatement": 2.0
+    },
+    {
+      "model": "qwen3-1.7b",
+      "d_model": 2048,
+      "layer": 26,
+      "identity_energy": 0.7976615746251756,
+      "K_raw": 3,
+      "K_decomposed": 64,
+      "understatement": 21.333333333333332
+    },
+    {
+      "model": "qwen3-4b",
+      "d_model": 2560,
+      "layer": 34,
+      "identity_energy": 0.876291404570489,
+      "K_raw": 7,
+      "K_decomposed": 149,
+      "understatement": 21.285714285714285
+    },
+    {
+      "model": "qwen3.5-0.8b",
+      "d_model": 1024,
+      "layer": 22,
+      "identity_energy": 0.7779447783842977,
+      "K_raw": 12,
+      "K_decomposed": 68,
+      "understatement": 5.666666666666667
+    },
+    {
+      "model": "qwen3.5-4b-n417",
+      "d_model": 2560,
+      "layer": 30,
+      "identity_energy": 0.7879023516844419,
+      "K_raw": 25,
+      "K_decomposed": 182,
+      "understatement": 7.28
+    },
+    {
+      "model": "qwen3.5-4b",
+      "d_model": 2560,
+      "layer": 30,
+      "identity_energy": 0.7895729218000651,
+      "K_raw": 25,
+      "K_decomposed": 183,
+      "understatement": 7.32
+    }
+  ],
+  "spearman_identity_vs_understatement": 0.7727272727272727,
+  "understated_over_1_5x_files": [
+    10,
+    11
+  ],
+  "understated_over_1_5x_models": [
+    9,
+    10
+  ],
+  "code_commit": "9f7dd6f+dirty",
+  "complete": true
+}

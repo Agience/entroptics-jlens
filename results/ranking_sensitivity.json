@@ -1,0 +1,136 @@
+{
+  "lens": "lenses\\qwen3.5-4b\\jlens\\Salesforce-wikitext\\Qwen3.5-4B_jacobian_lens_n1000.pt",
+  "streams": 6,
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28
+  ],
+  "rows": [
+    {
+      "kind": "noise",
+      "strength": 0.02,
+      "true_gap": 2.489362827039501e-05,
+      "n_layers": 6,
+      "acc": {
+        "coverage": 0.6666666666666666,
+        "participation": 0.3333333333333333,
+        "norm_ratio": 0.5
+      },
+      "p_coverage": 0.6875
+    },
+    {
+      "kind": "noise",
+      "strength": 0.05,
+      "true_gap": 0.00017558683375261787,
+      "n_layers": 4,
+      "acc": {
+        "coverage": 0.5,
+        "participation": 0.0,
+        "norm_ratio": 0.0
+      },
+      "p_coverage": 1.0
+    },
+    {
+      "kind": "noise",
+      "strength": 0.1,
+      "true_gap": 0.0002726500515381468,
+      "n_layers": 6,
+      "acc": {
+        "coverage": 0.8333333333333334,
+        "participation": 0.6666666666666666,
+        "norm_ratio": 0.0
+      },
+      "p_coverage": 0.21875
+    },
+    {
+      "kind": "noise",
+      "strength": 0.2,
+      "true_gap": 0.0010184051939884963,
+      "n_layers": 7,
+      "acc": {
+        "coverage": 0.8571428571428571,
+        "participation": 0.42857142857142855,
+        "norm_ratio": 0.0
+      },
+      "p_coverage": 0.125
+    },
+    {
+      "kind": "noise",
+      "strength": 0.4,
+      "true_gap": 0.003642587744453226,
+      "n_layers": 8,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.5,
+        "norm_ratio": 0.0
+      },
+      "p_coverage": 0.0078125
+    },
+    {
+      "kind": "rank",
+      "strength": 0.05,
+      "true_gap": 0.00017065095972216483,
+      "n_layers": 7,
+      "acc": {
+        "coverage": 0.8571428571428571,
+        "participation": 0.2857142857142857,
+        "norm_ratio": 1.0
+      },
+      "p_coverage": 0.125
+    },
+    {
+      "kind": "rank",
+      "strength": 0.1,
+      "true_gap": 0.0009268201671166699,
+      "n_layers": 6,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.6666666666666666,
+        "norm_ratio": 1.0
+      },
+      "p_coverage": 0.03125
+    },
+    {
+      "kind": "rank",
+      "strength": 0.25,
+      "true_gap": 0.0038395093859885736,
+      "n_layers": 7,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.7142857142857143,
+        "norm_ratio": 1.0
+      },
+      "p_coverage": 0.015625
+    },
+    {
+      "kind": "rank",
+      "strength": 0.5,
+      "true_gap": 0.010736550916951094,
+      "n_layers": 8,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.875,
+        "norm_ratio": 1.0
+      },
+      "p_coverage": 0.0078125
+    },
+    {
+      "kind": "rank",
+      "strength": 0.75,
+      "true_gap": 0.021854115917390234,
+      "n_layers": 8,
+      "acc": {
+        "coverage": 1.0,
+        "participation": 0.875,
+        "norm_ratio": 1.0
+      },
+      "p_coverage": 0.0078125
+    }
+  ]
+}

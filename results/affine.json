@@ -1,0 +1,181 @@
+{
+  "rows": [
+    {
+      "layer": 0,
+      "aff_a": 0.9961206528587248,
+      "aff_b": 0.9963501073527435,
+      "wins": 6,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": true,
+      "raw_prefers_big": true,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 2,
+      "aff_a": 0.9946212502051305,
+      "aff_b": 0.9948443324495598,
+      "wins": 6,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": true,
+      "raw_prefers_big": false,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 4,
+      "aff_a": 0.9903085633563325,
+      "aff_b": 0.99022521829857,
+      "wins": 1,
+      "streams": 6,
+      "p": 0.21875,
+      "aff_prefers_big": false,
+      "raw_prefers_big": true,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 6,
+      "aff_a": 0.9828140280249378,
+      "aff_b": 0.9820744308662746,
+      "wins": 0,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": false,
+      "raw_prefers_big": true,
+      "cov_prefers_big": false
+    },
+    {
+      "layer": 8,
+      "aff_a": 0.9775877325288413,
+      "aff_b": 0.9766660149602123,
+      "wins": 0,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": false,
+      "raw_prefers_big": false,
+      "cov_prefers_big": false
+    },
+    {
+      "layer": 10,
+      "aff_a": 0.9724433069316363,
+      "aff_b": 0.9714076767190195,
+      "wins": 0,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": false,
+      "raw_prefers_big": false,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 12,
+      "aff_a": 0.9665583615261437,
+      "aff_b": 0.9659862212836229,
+      "wins": 0,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": false,
+      "raw_prefers_big": false,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 14,
+      "aff_a": 0.9580705820628269,
+      "aff_b": 0.9576167515857853,
+      "wins": 0,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": false,
+      "raw_prefers_big": false,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 16,
+      "aff_a": 0.9436833919881095,
+      "aff_b": 0.9432714588014415,
+      "wins": 0,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": false,
+      "raw_prefers_big": false,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 18,
+      "aff_a": 0.9137476390441573,
+      "aff_b": 0.9128753230305725,
+      "wins": 0,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": false,
+      "raw_prefers_big": false,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 20,
+      "aff_a": 0.8705692055943195,
+      "aff_b": 0.8698994315726704,
+      "wins": 0,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": false,
+      "raw_prefers_big": false,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 22,
+      "aff_a": 0.8350933656058136,
+      "aff_b": 0.8344056254911703,
+      "wins": 0,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": false,
+      "raw_prefers_big": false,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 24,
+      "aff_a": 0.7893318823100891,
+      "aff_b": 0.7891806546344626,
+      "wins": 2,
+      "streams": 6,
+      "p": 0.6875,
+      "aff_prefers_big": false,
+      "raw_prefers_big": true,
+      "cov_prefers_big": false
+    },
+    {
+      "layer": 26,
+      "aff_a": 0.7436892921963332,
+      "aff_b": 0.7429513878328318,
+      "wins": 0,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": false,
+      "raw_prefers_big": true,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 28,
+      "aff_a": 0.6256726739977064,
+      "aff_b": 0.6249229377479278,
+      "wins": 0,
+      "streams": 6,
+      "p": 0.03125,
+      "aff_prefers_big": false,
+      "raw_prefers_big": true,
+      "cov_prefers_big": true
+    },
+    {
+      "layer": 30,
+      "aff_a": 0.4610092478573127,
+      "aff_b": 0.4609023449217417,
+      "wins": 2,
+      "streams": 6,
+      "p": 0.6875,
+      "aff_prefers_big": false,
+      "raw_prefers_big": true,
+      "cov_prefers_big": true
+    }
+  ],
+  "complete": true
+}
