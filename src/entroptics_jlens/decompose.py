@@ -52,8 +52,13 @@ class Decomposition:
 
     @property
     def identity_dominated(self) -> bool:
-        """More of the transport is pass-through than is transformation. A spectral floor read
-        on the undecomposed matrix is then reading the identity's flat block as its bulk."""
+        """More than half of ``||J||_F^2`` is the identity component.
+
+        The 0.5 is what the word means -- a majority of the energy -- rather than a value chosen
+        to predict anything, and nothing downstream is tuned to it. It labels a layer; it does not
+        decide whether to read one. That question is answered by ``removed_energy``, which is on
+        this object and is continuous.
+        """
         return self.removed_energy > 0.5
 
 
@@ -97,24 +102,24 @@ def decompose(J, *, kind: str = "identity") -> Decomposition:
                          diag_mean=dm, diag_sd=ds, offdiag_rms=off)
 
 
-#: Below this identity share the change measured across the swept lenses is 1.0x -- reading the
-#: raw transport gives the same answer. Every layer whose change exceeded 1.5x had a share
-#: between 0.348 and 0.778; every layer where it did not sat between 0.003 and 0.433. The two
-#: populations meet here. It is a screening threshold and nothing downstream depends on it: `screen`
-#: reports the share itself, and a caller who wants a different cut has the number.
-WORTH_DECOMPOSING = 0.4
 
 
 def identity_share(J) -> tuple[float, float]:
     """``(alpha, identity_energy)`` without an SVD.
 
     ``alpha = tr(J)/d`` costs a diagonal read and the share costs one Frobenius norm, so this is
-    the whole identity measurement at ``O(d^2)`` against the ``O(d^3)`` of a spectrum. Measured at
-    ``d = 2560``: **130 ms against 3047 ms**, a 23x saving, and the arithmetic is identical to
-    ``decompose`` -- it is the same two numbers, without building ``J - alpha*I``.
+    the whole identity measurement at ``O(d^2)`` against the ``O(d^3)`` of a spectrum, and the
+    ratio grows with ``d``. At ``d = 2560``, medians over repeated runs on one laptop: **11.9 ms
+    here against 1.96 s** for ``energy_spectrum``'s eigvalsh route, and 7.29 s for a full SVD --
+    so roughly two orders of magnitude, with the exponents rather than the wall-clock carrying it.
+    The arithmetic is identical to ``decompose``: the same two numbers, without building
+    ``J - alpha*I``.
 
-    Use it to decide whether a layer is worth the SVD. The share is what predicts the change:
-    below about 0.4 the two reads agree.
+    Use it to decide whether a layer is worth the SVD. The share is what tracks the change --
+    over the 81 layers swept whole they rank together at Spearman rho = +0.530 (p = 3.5e-07), with
+    no threshold on either -- but it orders the layers rather than dividing them: split those
+    layers at any change cut and the two share ranges overlap, and the overlap's lower edge moves
+    from 0.095 to 0.422 as the cut goes 1.1x to 3.0x. No cut is applied here.
     """
     A = as_frame(J, name="J")
     d = A.shape[0]
@@ -126,12 +131,22 @@ def identity_share(J) -> tuple[float, float]:
     return alpha, ((alpha * alpha * d) / total) if total > 0.0 else 0.0
 
 
-def screen(lens, layers=None, *, threshold: float = WORTH_DECOMPOSING) -> list[dict]:
+def screen(lens, layers=None, *, threshold: float | None = None) -> list[dict]:
     """Every layer's identity share, with no SVD anywhere. The sweep before the expensive read.
 
-    Returns one row per layer: ``layer``, ``alpha``, ``identity``, and ``worth_decomposing``.
-    A caller then pays for a spectrum only on the layers that flagged, which on a 31-layer
-    ``d = 2560`` lens is seconds instead of a minute and a half.
+    Returns one row per layer: ``layer``, ``alpha`` and ``identity``, ordered by share, descending.
+    A caller then pays for a spectrum on the layers it chooses, which on a 31-layer ``d = 2560``
+    lens is seconds instead of a minute and a half.
+
+    **No cut is applied unless one is asked for.** The share is measured exactly; where to divide
+    it is not. Over the 81 layers swept whole the share and the change rank together (Spearman
+    rho = +0.530, p = 3.5e-07), but splitting those layers at any change cut leaves two share
+    ranges that overlap -- and the overlap's lower edge moves from 0.095 to 0.422 as the cut goes
+    1.1x to 3.0x, so a dividing share reports the cut behind it rather than a property of the
+    transports. Some layer is misclassified either way, and the two errors differ in cost: a layer
+    wrongly skipped loses a result, while a layer wrongly read costs one SVD. Pass ``threshold``
+    to add a ``worth_decomposing`` column and own the number; omit it and the share is reported on
+    its own.
 
     ``lens`` is a ``LensFile`` or anything with ``jacobian(layer)`` and ``source_layers``.
     """
@@ -139,6 +154,8 @@ def screen(lens, layers=None, *, threshold: float = WORTH_DECOMPOSING) -> list[d
     rows = []
     for layer in picked:
         alpha, share = identity_share(lens.jacobian(layer))
-        rows.append({"layer": layer, "alpha": alpha, "identity": share,
-                     "worth_decomposing": bool(share >= threshold)})
+        row = {"layer": layer, "alpha": alpha, "identity": share}
+        if threshold is not None:
+            row["worth_decomposing"] = bool(share >= threshold)
+        rows.append(row)
     return rows

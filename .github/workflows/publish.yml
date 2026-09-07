@@ -4,7 +4,13 @@ name: publish
 # for this repository, this workflow file and the `pypi` environment, so no API token is stored
 # anywhere. The three names below must match that configuration exactly or PyPI refuses the upload.
 
+# The tag push is the trigger, not the release. A release created by a workflow using the default
+# GITHUB_TOKEN does not raise `release: published` for other workflows, so publishing off that
+# event would leave `release.yml` making a release that nothing uploaded for. Both workflows watch
+# the tag instead, and `release: published` is kept so a release made by hand still publishes.
 on:
+  push:
+    tags: ["v*"]
   release:
     types: [published]
   workflow_dispatch:
@@ -28,6 +34,16 @@ jobs:
           python-version: "3.10"
 
       - run: pip install -e ".[dev]"
+
+      # What gets uploaded is named by pyproject, not by the tag, so a mismatch would put one
+      # version on PyPI and another on the release. Checked here as well as in `release.yml`
+      # because the two run in parallel off the same tag and either can finish first.
+      - name: The tag and the package must name one version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          proj=$(grep -m1 '^version = ' pyproject.toml | cut -d'"' -f2)
+          test "$tag" = "$proj" || { echo "::error::tag $tag, pyproject $proj"; exit 1; }
 
       # The artifact is what gets published, so it is tested rather than the working tree: the
       # suite ships inside the sdist and skips the modules whose repository files are not part of

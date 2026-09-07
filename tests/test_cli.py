@@ -139,40 +139,71 @@ def test_the_reported_peak_ignores_layers_that_resolve_nothing(tmp_path, capsys)
     assert reported in range(4, 8)
 
 
-def test_compare_calls_two_draws_of_one_construction_different_maps(tmp_path):
+def test_two_draws_of_one_construction_read_far_below_two_fits_of_one_model(tmp_path):
+    """The negative end of the scale `compare` prints. Two independent draws share no map, and
+    their mean canonical cosine lands an order of magnitude below what two fits of one model give.
+    """
     a = planted_lens(tmp_path, seed=0, name="a.pt")
     b = planted_lens(tmp_path, seed=7, name="b.pt")
     out = tmp_path / "cmp.json"
     assert main(["compare", str(a), str(b), "--k", "4", "--json", str(out)]) == 0
     rows = json.loads(out.read_text(encoding="utf-8"))["layers"]
-    assert all(r["verdict"] != "same map" for r in rows)
+    assert all(r["cos_mean"] < 0.5 for r in rows), [r["cos_mean"] for r in rows]
 
 
-def test_compare_against_itself_is_the_same_map(tmp_path):
-    """The positive control. Without it, "different map" everywhere could be the read failing."""
+def test_compare_against_itself_is_exactly_one(tmp_path):
+    """The positive control, and it is exact: every canonical cosine between a subspace and
+    itself is 1, so a low reading anywhere else cannot be the read failing. A verdict band could
+    only have asserted "above 0.8" here, which is a weaker statement about a stronger fact.
+    """
     p = planted_lens(tmp_path)
     out = tmp_path / "self.json"
     assert main(["compare", str(p), str(p), "--k", "4", "--json", str(out)]) == 0
     rows = json.loads(out.read_text(encoding="utf-8"))["layers"]
-    assert all(r["verdict"] == "same map" for r in rows)
+    assert all(r["cos_mean"] == pytest.approx(1.0, abs=1e-9) for r in rows)
+    assert all(r["cos_min"] == pytest.approx(1.0, abs=1e-9) for r in rows)
+    assert all(r["k_agree"] == 4 for r in rows)
 
 
-def test_the_verdict_reads_the_mean_because_the_minimum_fails_on_honest_fits():
-    """The measured populations the SAME_MAP boundary sits between.
+def test_compare_reports_no_verdict_and_carries_the_scale_it_was_read_against():
+    """What the mean canonical cosine has actually measured, and the gap nothing sits in.
 
-    Two published fits of one model (Qwen3.5-4B n=417 and n=1000) read these mean canonical
-    cosines over their top 400 directions, and cos_min 0.0004 at layer 0 -- so a verdict on the
-    minimum would call two fits of one model different maps. Two unrelated maps of the same
-    construction read the second row. Recorded here so the boundary cannot drift without the
-    evidence for it moving too.
+    Two published fits of one model (Qwen3.5-4B n=417 and n=1000) read the first row over their
+    top 400 directions; two unrelated maps of the same construction read the second. Six values,
+    with 0.19 to 0.86 unobserved. `compare` prints both ranges beside the number rather than
+    naming bands across them: two cuts over two populations invents a third category, and a test
+    that asserts the cuts sit between the values they were read off cannot fail.
     """
-    from entroptics_jlens.cli import DRIFTED, SAME_MAP
+    from entroptics_jlens.cli import MEASURED_SAME_MODEL, MEASURED_UNRELATED
 
     same_model = [0.8587, 0.9909, 0.9960, 0.9985]          # layers 0, 12, 26, 30
-    unrelated = [0.1657, 0.1908]                            # test_compare_calls_two_draws...
-    assert all(v > SAME_MAP for v in same_model)
-    assert all(v < DRIFTED for v in unrelated)
-    assert max(unrelated) < DRIFTED < SAME_MAP < min(same_model)
+    unrelated = [0.1657, 0.1908]                            # test_two_draws_of_one_construction...
+
+    # The claim is that the two populations are far apart, which is a fact about the measurements
+    # and holds whatever anyone does with it.
+    assert min(same_model) - max(unrelated) > 0.6
+
+    # And that the constants report those measurements rather than dividing them.
+    assert MEASURED_SAME_MODEL == (0.8587, 0.9985)
+    assert MEASURED_UNRELATED == (0.1657, 0.1908)
+    assert MEASURED_SAME_MODEL[0] <= min(same_model) and max(same_model) <= MEASURED_SAME_MODEL[1]
+    assert MEASURED_UNRELATED[0] <= min(unrelated) and max(unrelated) <= MEASURED_UNRELATED[1]
+
+
+def test_compare_takes_the_agreement_cosine_from_the_caller(tmp_path):
+    """`agree_to` counts the leading directions clearing --agree-at, so raising the bar cannot
+    lengthen the prefix. The value used is recorded in the output."""
+    a = planted_lens(tmp_path, seed=0, name="a.pt")
+    b = planted_lens(tmp_path, seed=7, name="b.pt")
+    got = {}
+    for at in (0.5, 0.99):
+        out = tmp_path / f"cmp{at}.json"
+        assert main(["compare", str(a), str(b), "--k", "4", "--agree-at", str(at),
+                     "--json", str(out)]) == 0
+        rows = json.loads(out.read_text(encoding="utf-8"))["layers"]
+        assert all(r["agree_at"] == at for r in rows)
+        got[at] = [r["k_agree"] for r in rows]
+    assert all(hi <= lo for lo, hi in zip(got[0.5], got[0.99]))
 
 
 def test_compare_refuses_two_widths(tmp_path, capsys):

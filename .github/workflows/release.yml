@@ -1,0 +1,48 @@
+name: release
+
+# Pushing a version tag is the whole release action. This turns that tag into a GitHub release,
+# which is what the Zenodo webhook listens for, and `publish.yml` uploads to PyPI from the same
+# tag push. Nothing here is done by hand, so a release cannot be half-made: a tag with no release,
+# or a release whose tag was never pushed.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write            # creating a release writes to the repository
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The tag names the version, so it has to agree with what the package will call itself.
+      # A tag that disagrees would put one number on PyPI, another on the release, and a third in
+      # the citation file -- and Zenodo would archive the mismatch.
+      - name: The tag, pyproject and CITATION.cff must name one version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          proj=$(grep -m1 '^version = ' pyproject.toml | cut -d'"' -f2)
+          cite=$(grep -m1 '^version: ' CITATION.cff | awk '{print $2}')
+          zeno=$(python -c "import json;print(json.load(open('.zenodo.json'))['version'])")
+          echo "tag=$tag pyproject=$proj citation=$cite zenodo=$zeno"
+          for got in "$proj" "$cite" "$zeno"; do
+            if [ "$got" != "$tag" ]; then
+              echo "::error::tag $tag does not match $got"
+              exit 1
+            fi
+          done
+
+      # Idempotent: re-running the workflow on an existing release is a no-op rather than a
+      # failure, which matches `skip-existing` on the PyPI side.
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "release $GITHUB_REF_NAME already exists"
+          else
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes ""
+          fi

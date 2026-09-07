@@ -1,6 +1,12 @@
 # entroptics-jlens
 
+[![PyPI](https://img.shields.io/pypi/v/entroptics-jlens)](https://pypi.org/project/entroptics-jlens/)
+[![Python](https://img.shields.io/pypi/pyversions/entroptics-jlens)](https://pypi.org/project/entroptics-jlens/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/Agience/entroptics-jlens/blob/main/LICENSE)
+[![CI](https://github.com/Agience/entroptics-jlens/actions/workflows/test.yml/badge.svg)](https://github.com/Agience/entroptics-jlens/actions/workflows/test.yml)
+[![Paper](https://img.shields.io/badge/paper-PDF-b31b1b)](https://github.com/Agience/entroptics-jlens/blob/main/research/PAPER.pdf)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22293929.svg)](https://doi.org/10.5281/zenodo.22293929)
+[![Sponsor](https://img.shields.io/badge/Sponsor-Agience-EA4AAA?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/Agience)
 
 ## The claim
 
@@ -141,16 +147,28 @@ enough to sweep whole — 81 layers — bucketed by relative depth
 **Below relative depth 0.6 the two reads agree.** Read the raw transport there and you get the
 same answer. Above 0.8 the change is large in 14 of 18 layers measured.
 
-And the cut is the identity share, not the depth: over those 81 layers every layer where the
-change exceeds 1.5× has an identity share between 0.348 and 0.778, and every layer where it does
-not sits between 0.003 and 0.433. The two populations meet at about **0.4** — which `audit` prints in its own
-column, so you can read off whether your layer is in the affected range rather than guessing from
-its index.
+What tracks the change is the identity share, not the depth — and stated without a cut anywhere,
+over those 81 layers the share and the change rank together at Spearman **ρ = +0.530**
+(p = 3.5e-07).
+
+**The share orders the layers; no value of it separates them.** Split the 81 layers at any change
+cut and the two share ranges overlap, and where they overlap is a property of the cut:
+
+| change cut | layers above | share above | share below | overlap |
+|---|---|---|---|---|
+| 1.1× | 26 | 0.095–0.778 | 0.003–0.281 | 0.095–0.281 |
+| 1.5× | 19 | 0.348–0.778 | 0.003–0.433 | 0.348–0.433 |
+| 2.0× | 12 | 0.422–0.778 | 0.003–0.478 | 0.422–0.478 |
+| 3.0× | 10 | 0.422–0.778 | 0.003–0.555 | 0.422–0.555 |
+
+The lower edge moves from 0.095 to 0.422 across that sweep, so a share quoted as a dividing line
+reports the cut behind it. None is built in: `audit` and `screen` print the share itself, and you
+read your layer off it rather than guessing from its index.
 
 The deep layers are where the change matters, and they are also where claims about a model's
 workspace and capacity are made.
 
-### It does not depend on the one free parameter
+### It does not depend on the free parameters
 
 `K` is read against a noise floor at a false-alarm rate you choose. If the effect only existed at
 the value in the table it would be an artefact of that choice, so it was swept across **5.7 orders
@@ -167,6 +185,28 @@ of magnitude**:
 Nine of ten at every setting, and the per-model factors barely move — qwen3-1.7b runs 21.7× to
 20.3×, gpt2 stays at 6.5×, and gemma-3-270m sits at 1.1× throughout. **The exception is as stable
 as the rule.**
+
+The floor's other input is the variance estimate, which `mp` takes as a de-biased **median** row
+energy — also a choice, so also swept. Reading the row energies at the p-th quantile instead, with
+the matching χ²_F de-bias so every p estimates the same variance:
+
+| σ̂ estimator | models over 1.5× | factor range | Spearman |
+|---|---|---|---|
+| p = 0.10 | **10/10** | 1.66× – 40.33× | +0.564 |
+| p = 0.25 | 9/10 | 1.25× – 33.67× | +0.655 |
+| **p = 0.50 (published)** | 9/10 | 1.08× – 21.33× | **+0.773** |
+| p = 0.75 | 9/10 | 1.00× – 16.57× | +0.791 |
+| p = 0.90 | 9/10 | 1.04× – 9.43× | +0.615 |
+| arithmetic mean | 8/10 | 1.00× – 6.86× | +0.788 |
+
+Nine of ten at every quantile. The absolute count does move with the estimator — it is the one
+input `K` is genuinely sensitive to — but both readings move together, because `αI` adds `α²` to
+*every* row's energy and shifts the whole distribution rather than a tail of it.
+
+The published median is also the conservative member: at p = 0.10 every one of the eleven files
+reads a **larger** factor, and 10 of 10 models clear 1.5×. The arithmetic mean is the non-robust
+end and is degenerate rather than competing — dominated by the signal it is meant to be a null
+for, it resolves 3 of 768 directions at gpt2 layer 10 on both sides.
 
 ### The fix
 
@@ -198,9 +238,9 @@ Measured on Qwen3.5-4B, the number that loop produces before and after:
 | 24 | 49 | 131 | 2.7× |
 | 30 | 25 | **183** | **7.3×** |
 
-**Apply it unconditionally.** It is exact at every layer, costs `O(d²)` — 8.8 ms at d=2560, against
-seconds for the spectrum that follows — and is never wrong to have done. There is no decision to
-make and no read to take first.
+**Apply it unconditionally.** It is exact at every layer, costs `O(d²)` — milliseconds at d=2560,
+against seconds for the spectrum that follows — and is never wrong to have done. There is no
+decision to make and no read to take first.
 
 `screen` is a *separate* convenience, and not a prerequisite. It answers "can I skip the expensive
 spectrum on this layer entirely", which is a question about your compute budget rather than about
@@ -254,26 +294,36 @@ Four reads. Three of them need only the checkpoint.
 |---|---|---|---|
 | `screen` | **which layers even need the expensive read?** | the file | O(d²), no SVD |
 | `audit` | at this layer, how much of the map is the architecture rather than the model? how many directions does it resolve above its own noise floor? | the file | O(d³) per layer |
-| `compare` | are these two readouts the same map, or has one drifted? | two files | O(d³) per layer |
+| `compare` | how far into the spectrum do these two readouts agree? | two files | O(d³) per layer |
 | `coverage` | how much of a real residual stream does this readout reach, against what a random readout of the same size would reach? | the files, plus streams you collect | O(d³) per layer |
 
 ### `screen` — do not pay for a spectrum you do not need
 
 The identity share is `tr(J)/d` and one Frobenius norm. No SVD, `O(d²)` against a spectrum's
-`O(d³)` — **8.8 ms against 2.39 s at d=2560** — and it is the quantity that *predicts* the
-correction rather than a proxy for it, which is what makes screening on it sound.
+`O(d³)` — at d=2560 on one laptop, **11.9 ms against 1.96 s**, medians over repeated runs — and it
+is the quantity that *predicts* whether removing the identity changes the count, rather than a
+proxy for it. The exponents are what carry that, not the wall-clock.
 
 ```
 entroptics-jlens screen qwen3.5-4b.pt
 
- layer    alpha  identity  needs the full read?
-    12    0.280     0.070  no
-    20    0.724     0.390  no
-    24    1.037     0.583  yes
-    30    0.994     0.790  yes
+ layer    alpha  identity
+    30    0.994     0.790
+    24    1.037     0.583
+    20    0.724     0.390
+    12    0.280     0.070
+```
 
-3 of 6 layers carry enough identity to change the answer: 24, 26, 30
-  entroptics-jlens audit qwen3.5-4b.pt --layers 24,26,30
+Ordered by share, no verdict. Pass `--threshold` to add one and own the number:
+
+```
+entroptics-jlens screen qwen3.5-4b.pt --threshold 0.3
+
+ layer    alpha  identity  needs the full read?
+    30    0.994     0.790  yes
+    24    1.037     0.583  yes
+    20    0.724     0.390  yes
+    12    0.280     0.070  no
 ```
 
 On Qwen3.5-4B's 31 layers: **auditing everything is 82 s; screening (1.0 s) then auditing the 10
@@ -340,18 +390,18 @@ Two independent fits of one model should be the same map. A checkpoint that has 
 entroptics-jlens compare fit_a.pt fit_b.pt --k 400
 ```
 
-There are two published fits of Qwen3.5-4B, one over 417 sequences and one over 1000, so the honest answer is measurable rather than assumed. Over their top 400 directions:
+There are two published fits of Qwen3.5-4B, one over 417 sequences and one over 1000, so the answer is measurable rather than assumed. Over their top 400 directions:
 
-| layer | agree_to | cos_mean | cos_min | verdict |
-|---|---|---|---|---|
-| 0 | 268 | 0.8587 | 0.0004 | same map |
-| 12 | 395 | 0.9909 | 0.5966 | same map |
-| 26 | 397 | 0.9960 | 0.7592 | same map |
-| 30 | 399 | 0.9985 | 0.8844 | same map |
+| layer | agree_to | cos_mean | cos_min |
+|---|---|---|---|
+| 0 | 268 | 0.8587 | 0.0004 |
+| 12 | 395 | 0.9909 | 0.5966 |
+| 26 | 397 | 0.9960 | 0.7592 |
+| 30 | 399 | 0.9985 | 0.8844 |
 
 `cos_min` is the trap. Two genuine fits of one model disagree **completely** on their 400th direction — it sits in the spectral tail where the fit is noise — so a rule reading the minimum would have called two fits of one model different maps at every layer. Read `agree_to` instead: the two agree on 268 of their leading 400 directions at layer 0 and on 399 of them at layer 30. That is the question principal angles exist to answer, and no scalar summary gives it.
 
-The verdict reads the mean, whose two populations are far apart and were both measured: 0.86 to 0.9985 for these fits of one model, 0.17 for two unrelated maps of the same shape.
+`compare` prints the cosine and the scale it is read against, and stops there: these fits of one model span 0.8587 to 0.9985 across depth, and two unrelated maps of the same construction read 0.1657 and 0.1908. Nothing has been measured between 0.19 and 0.86, so a named band over that interval would be a category with no observation in it.
 
 This read sees the map only. It says whether two readouts are the same object. It cannot say which of them is better — for that you need the model.
 
@@ -648,6 +698,7 @@ too:
 > entropy-matched resolution.* 2026. [doi:10.5281/zenodo.21273400](https://doi.org/10.5281/zenodo.21273400).
 > Software: <https://pypi.org/project/entroptics/> (this work uses 0.2.1).
 
-## License
+Security issues: email **connect@agience.ai** rather than opening a public issue.
 
-Apache-2.0 — see [LICENSE](https://github.com/Agience/entroptics-jlens/blob/main/LICENSE) and [NOTICE](https://github.com/Agience/entroptics-jlens/blob/main/NOTICE). Contributing: [CONTRIBUTING.md](https://github.com/Agience/entroptics-jlens/blob/main/CONTRIBUTING.md).
+Licensed under Apache-2.0 — see [`LICENSE`](https://github.com/Agience/entroptics-jlens/blob/main/LICENSE)
+and [`NOTICE`](https://github.com/Agience/entroptics-jlens/blob/main/NOTICE).

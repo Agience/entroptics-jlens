@@ -64,6 +64,7 @@ results/*
 !results/subspace_retrieval.json
 !results/sweep_and_depth.json
 !results/the_claim.json
+!results/variance_estimator.json
 !results/transport_specificity.json
 !results/twofit.json
 lenses/

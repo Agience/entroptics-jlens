@@ -31,12 +31,29 @@ STDLIB_MODULES = {"pip", "venv", "unittest", "json", "http", "compileall", "ensu
 
 
 def workflow_run_steps() -> list[str]:
-    """Every `run:` step across every workflow in the repository."""
-    steps = []
+    """Every command run by every workflow in the repository.
+
+    Three shapes have to be read, not one. `- run: cmd` is the inline step. `run: cmd` is the same
+    step carrying a `name:`. And `run: |` introduces a block whose commands are on the following
+    more-indented lines -- a form that a single-line regex captures as the literal `|`, which
+    would let a whole block of commands through unchecked while the count still looked healthy.
+    """
+    steps: list[str] = []
     for wf in WORKFLOWS:
-        text = wf.read_text(encoding="utf-8")
-        steps += [m.group(1).strip()
-                  for m in re.finditer(r"^\s*-\s+run:\s*(.+)$", text, re.MULTILINE)]
+        lines = wf.read_text(encoding="utf-8").splitlines()
+        for i, line in enumerate(lines):
+            m = re.match(r"^(\s*)(?:-\s+)?run:\s*(.*)$", line)
+            if not m:
+                continue
+            indent, rest = len(m.group(1)), m.group(2).strip()
+            if rest not in ("|", ">", "|-", ">-"):
+                steps.append(rest)
+                continue
+            for body in lines[i + 1:]:
+                if body.strip() and (len(body) - len(body.lstrip())) <= indent:
+                    break
+                if body.strip():
+                    steps.append(body.strip())
     return steps
 
 

@@ -79,18 +79,22 @@ class _Lens:
         return transport(alpha=self._alphas[layer], seed=layer)
 
 
-def test_screen_flags_the_layers_whose_identity_dominates():
+def test_screen_reports_the_share_and_passes_no_judgement():
+    """The share is measured; where to divide it is not a measurement. Across the swept lenses the
+    two populations overlap -- 0.348 to 0.778 where the count changed, 0.003 to 0.433 where it did
+    not -- so any built-in cut misclassifies a layer, and skipping one that mattered loses a
+    result. `screen` therefore ships no default."""
     lens = _Lens([0.0, 0.2, 1.0, 4.0, 8.0])
     rows = je.screen(lens)
     assert [r["layer"] for r in rows] == [0, 1, 2, 3, 4]
     assert [r["identity"] for r in rows] == sorted(r["identity"] for r in rows), (
-        "the fixture should have a rising identity share, or the flagging is untested")
-    assert rows[0]["worth_decomposing"] is False
-    assert rows[-1]["worth_decomposing"] is True
+        "the fixture should have a rising identity share, or the ordering is untested")
+    assert all("worth_decomposing" not in r for r in rows), (
+        "screen must not decide for the caller unless asked")
 
 
-def test_the_threshold_is_a_screening_cut_and_the_share_is_reported():
-    """Nothing downstream may depend on 0.4: a caller who wants a different cut has the number."""
+def test_a_verdict_appears_only_when_a_threshold_is_given():
+    """A caller who wants a cut passes one and owns the number; the share never depends on it."""
     lens = _Lens([0.0, 1.0, 4.0, 8.0])
     strict = je.screen(lens, threshold=0.99)
     loose = je.screen(lens, threshold=0.0)

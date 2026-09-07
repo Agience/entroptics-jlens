@@ -17,9 +17,12 @@ above the layer. At the deepest fitted layer of the six lenses read here from mo
 That matters for any spectral read whose threshold is derived from the frame it is judging. We read
 resolved rank with Entroptics [Sessford 2026]: $K=\#\{\sigma_k>\text{floor}\}$ against a derived
 finite-size Marchenko–Pastur / Tracy–Widom edge. Its variance estimate is a de-biased **median row
-energy**, and an added $\alpha I$ contributes $\alpha^2$ to *every* row — the one contribution a
-median over rows cannot reject. **Measured, the identity raises the floor computed from it by more than 2× on eight of the ten
-models, and by up to 4.8×**, and the modes in between fall under the line.
+energy**, and an added $\alpha I$ contributes $\alpha^2$ to *every* row — which moves the whole
+distribution of row energies rather than a tail of it, so no location statistic reading them can
+reject it. **Measured, the identity raises the floor computed from it by more than 2× on eight of the ten
+models, and by up to 4.8×**, and the modes in between fall under the line. Swept over the estimator
+from the $p=0.10$ quantile to the arithmetic mean, the count still moves for 9 of 10 models at
+every member of the family (§1.4).
 
 The separation is exact and closed form. $\alpha=\operatorname{tr}(J)/d$ is the orthogonal
 projection of $J$ onto $\operatorname{span}(I)$ under the Frobenius inner product, and the
@@ -44,8 +47,10 @@ random directions decoded the same way — roughly 7 to 10 times chance. But dec
 index ($r^2=0.988$) with only a $+7.3\%$ excess at the floor and no knee there, so this establishes
 that reproducible structure extends well past $K(J)$ — not that it stops at $K(M)$ (§1.7).
 
-**Scope.** Below relative depth 0.6 the two reads agree. The effect lives where the identity share
-passes about 0.4, which is the deep layers. Every count here is an `mp` read on a corpus-averaged
+**Scope.** Below relative depth 0.6 the two reads agree. The effect goes with the identity share
+rather than with depth: over the 81 layers swept whole, the share and the gain rank together at
+Spearman $\rho=+0.530$ ($p=3.5\times10^{-7}$), with no threshold on either. The share orders the
+layers; it does not divide them, and §1.5 measures that no value of it can. Every count here is an `mp` read on a corpus-averaged
 transport, an object §2.3 argues has no bulk for a derived edge to locate; the threshold-free reads
 of §4 are the right instrument there, and under them the same decomposition moves the answer the
 other way ($\mathrm{PR}(J)=1328$ against $\mathrm{PR}(M)=124$). Three criteria give three
@@ -256,6 +261,48 @@ identity acts on exactly that quantity: it adds $\alpha^2$ to every row's energy
 contribution a median over rows cannot reject. That is the mechanism of §1.1, stated as the
 sensitivity it is.
 
+**And the median is a choice, so it is swept too.** It is the last free parameter in the chain: the
+Johnstone centring and the Tracy–Widom quantile are fixed by the shape and by $\alpha_{\text{FA}}$,
+which leaves the location statistic that reads the row energies. Put the published estimator inside
+the one-parameter family
+
+$$\hat\sigma^2(p) \;=\; \frac{Q_p(\lVert \text{row}\rVert^2)}{\chi^2_F\text{.ppf}(p)\cdot(N-1)/N}$$
+
+where $p=0.5$ is the median and the matching $\chi^2_F$ quantile keeps every $p$ a consistent
+estimator of the same variance under a Gaussian null. Over the eleven lens files at their deepest
+fitted layer, $\alpha_{\text{FA}}=0.05$:
+
+| $\hat\sigma$ estimator | models over 1.5× | factor range | Spearman(share, factor) |
+|---|---|---|---|
+| $p=0.10$ | **10/10** | 1.66× – 40.33× | $+0.564$ |
+| $p=0.25$ | 9/10 | 1.25× – 33.67× | $+0.655$ |
+| $p=0.40$ | 9/10 | 1.06× – 26.67× | $+0.655$ |
+| **$p=0.50$ (published)** | **9/10** | **1.08× – 21.33×** | $\mathbf{+0.773}$ |
+| $p=0.60$ | 9/10 | 1.03× – 20.00× | $+0.797$ |
+| $p=0.75$ | 9/10 | 1.00× – 16.57× | $+0.791$ |
+| $p=0.90$ | 9/10 | 1.04× – 9.43× | $+0.615$ |
+| arithmetic mean | 8/10 | 1.00× – 6.86× | $+0.788$ |
+
+Nine of ten models at every quantile, and the rank association holds from $+0.564$ to $+0.797$
+across the family. The one model that does not move is gemma-3-270m at every estimator — the same
+model, and it carries the smallest identity share.
+
+**The absolute count is estimator-sensitive; the comparison is not.** Both readings shift together,
+because $\alpha I$ adds $\alpha^2$ to *every* row's energy and so moves the whole distribution of
+row energies rather than a tail of it. No location statistic can reject a constant added to all of
+its inputs, which is why the choice of one does not decide the result.
+
+**The published estimator is the conservative member of the family.** At $p=0.10$ every one of the
+eleven files reads a *larger* factor than at the published median — qwen3-1.7b 40.33× against
+21.33×, gemma-3-4b 21.47× against 10.31× — and 10 of 10 models clear 1.5× rather than 9. The
+median was not selected to make the effect large.
+
+The arithmetic mean is included as the non-robust end of the family and is degenerate rather than
+competing: a mean row energy is dominated by the signal it is supposed to be a null for, so its
+floor sits above nearly the whole spectrum. At gpt2 layer 10 it resolves 3 of 768 directions on
+$J$ and 3 on $M$ — equal, because almost nothing clears it either way. That failure is the reason
+a robust statistic is used here at all.
+
 Note the two halves separately. The *decomposition* takes no threshold — $\alpha=\operatorname{tr}(J)/d$
 is closed form. Only the *counting* involves a false-alarm rate.
 
@@ -278,11 +325,26 @@ The five wider lenses are read at their deepest layer only (§1), because a per-
 half of the catalogue, and the models with the largest identity shares are not in it.
 
 **Below relative depth 0.6 the two reads agree**, and the median gain sits at or below $1.0\times$
-in all three of those bins. Above 0.8 the gain is large in 14 of 18 layers. The cut is the identity
-share rather than the depth index: over these 81 layers every layer whose gain exceeds $1.5\times$
-has a share between $0.348$ and $0.778$, and every layer where it does not between $0.003$ and
-$0.433$. The two populations meet over $0.348$ to $0.433$ — four layers above the line and one below —
-and the deepest layers of the wider models extend the upper range to $0.876$.
+in all three of those bins. Above 0.8 the gain is large in 14 of 18 layers. What tracks the gain is
+the identity share rather than the depth index, and stated without a cut anywhere: over these 81
+layers the share and the gain rank together at Spearman $\rho=+0.530$ ($p=3.5\times10^{-7}$). The
+deepest layers of the wider models carry shares up to $0.876$.
+
+**The share orders the layers and no value of it separates them.** Splitting the 81 layers at a
+gain cut always leaves two share ranges that overlap, and where the overlap falls is a property of
+the cut rather than of the transports:
+
+| gain cut | layers above | share range above | share range below | overlap |
+|---|---|---|---|---|
+| $1.1\times$ | 26 | 0.095–0.778 | 0.003–0.281 | 0.095–0.281 |
+| $1.3\times$ | 21 | 0.267–0.778 | 0.003–0.433 | 0.267–0.433 |
+| $1.5\times$ | 19 | 0.348–0.778 | 0.003–0.433 | 0.348–0.433 |
+| $2.0\times$ | 12 | 0.422–0.778 | 0.003–0.478 | 0.422–0.478 |
+| $3.0\times$ | 10 | 0.422–0.778 | 0.003–0.555 | 0.422–0.555 |
+
+The lower edge moves from $0.095$ to $0.422$ across that range, so any single share quoted as a
+dividing line reports the cut it was derived under. This paper puts no threshold on the share and
+`screen` applies none; the rank association above is the statement that survives the choice.
 
 At low identity the effect reverses — $K$ falls slightly (203 → 178 at Qwen layer 12, identity
 share 0.070). The mechanism is the estimator rather than lost signal: `mp` takes a **median** row
@@ -1132,6 +1194,7 @@ are fetched with `entroptics-jlens fetch <model>`.
 | §1.2 structure-free surrogates | `exp55_structure_free_control.py` | `results/structure_free_control.json` |
 | §1.3 planted rank | `tests/test_claim_ground_truth.py` | — (fixture, seed $100\times\text{rank}$) |
 | §1.4 false-alarm sweep, §1.5 depth profile | `exp54_sweep_and_depth.py` | `results/sweep_and_depth.json` |
+| §1.4 variance-estimator sweep | `exp56_variance_estimator.py` | `results/variance_estimator.json` |
 | §1.7 what the modes name | `exp52_what_the_hidden_modes_name.py` | — |
 | §1.7 two-fit reproduction, blocks, nulls | `exp53_hidden_modes_reproduce.py` | `results/hidden_modes_reproduce.json` |
 | §3.1 estimator noise, §3.2 principal angles | `exp3_two_fit_noise.py` | `results/twofit.json` |

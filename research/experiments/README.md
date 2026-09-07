@@ -58,6 +58,7 @@ maintained by hand, so this table cannot drift from what is actually here.
 | [`exp52_what_the_hidden_modes_name.py`](exp52_what_the_hidden_modes_name.py) | What the modes the identity hides actually name, in tokens. |
 | [`exp53_hidden_modes_reproduce.py`](exp53_hidden_modes_reproduce.py) | Do the modes the identity hides name the same tokens in two independent fits? |
 | [`exp54_sweep_and_depth.py`](exp54_sweep_and_depth.py) | The two robustness tables of section 1: the false-alarm sweep and the depth profile. |
+| [`exp56_variance_estimator.py`](exp56_variance_estimator.py) | Sweeps the floor's variance estimator over the quantile family, the last free parameter in the count. |
 | [`exp55_structure_free_control.py`](exp55_structure_free_control.py) | How much of the change in resolved count is a property of the transport? |
 | [`depth_report.py`](depth_report.py) | The depth-profile page: one curve per model, plotted against relative depth. |
 | [`fetch_lens.py`](fetch_lens.py) | Download a published Jacobian lens. |

@@ -61,16 +61,12 @@ class Coverage:
     # -- a mode outside the calibration. Same separation, opposite
     # reliability, so a threshold on it conflates the two situations. What governs is the KIND of
     # difference between the two readouts, which the caller knows and this object never sees.
-
-    @property
-    def above_chance(self) -> bool:
-        """Is the overlap larger than a random readout of the same size would give?
-
-        The threshold is deliberately crude -- twice the null -- because the point is to catch
-        the case the old read missed, where the answer *is* chance. A calibrated test needs the
-        null's variance, which ``coverage_null_sample`` supplies empirically.
-        """
-        return self.coverage > 2.0 * self.null
+    #
+    # For the same reason there is no `above_chance` flag. `null` is the analytic chance level and
+    # `excess` is the distance from it on a scale where 0 is chance and 1 is full span, so the
+    # comparison is already in hand; a boolean would only add a factor nothing measured. Where the
+    # question is whether an overlap could have arisen by chance, `coverage_null_sample` supplies
+    # the null's spread empirically, which is what a calibrated answer needs.
 
 
 def _resolved_basis(W, far: float = 0.05):

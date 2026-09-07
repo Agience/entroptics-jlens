@@ -32,22 +32,27 @@ import numpy as np
 
 from . import catalog as _catalog
 from .coverage import coverage as _coverage
-from .decompose import WORTH_DECOMPOSING, decompose, screen
+from .decompose import decompose, screen
 from .io import LensFormatError, load_lens
 from .spectra import (energy_spectrum, gram_spectrum, participation_ratio,
                       principal_angles, residual_gram)
 from .transport import floor_is_resolvable, transport_spectrum
 
-#: A canonical cosine at or above this counts as a direction the two readouts share. 0.9 is
-#: cos(26 deg): well inside "the same direction" and well outside what unaligned subspaces give
-#: (two random k-subspaces of R^2560 have essentially all their cosines near 0).
+#: The default for ``--agree-at``. A canonical cosine at or above this counts as a direction the
+#: two readouts share. 0.9 is cos(26 deg): well inside "the same direction" and well outside what
+#: unaligned subspaces give (two random k-subspaces of R^2560 have essentially all their cosines
+#: near 0). It DEFINES what the reported ``agree_to`` column counts rather than classifying a
+#: result, and ``--agree-at`` moves it.
 AGREE_AT = 0.9
 
-#: Verdict boundaries on the MEAN canonical cosine, placed in the gap between two measured
-#: populations rather than chosen: two published fits of one model read 0.859-0.9985 across
-#: depth, and two unrelated maps of the same construction read 0.166-0.191.
-SAME_MAP = 0.8
-DRIFTED = 0.4
+#: What the mean canonical cosine has measured, for placing a number that is read against it. Two
+#: published fits of one model (Qwen3.5-4B n=417 and n=1000) read 0.8587 to 0.9985 across depth;
+#: two unrelated maps of the same construction read 0.1657 and 0.1908. Six values, and the interval
+#: between them has never been observed -- which is why `compare` reports the cosine and prints
+#: these ranges beside it instead of naming bands. Stated to the digits measured: a range rounded
+#: inward excludes the reading that produced it.
+MEASURED_SAME_MODEL = (0.8587, 0.9985)
+MEASURED_UNRELATED = (0.1657, 0.1908)
 
 #: Shown under `--help`. Held as a triple-quoted constant rather than built by concatenation so
 #: the layout in this file is the layout a reader sees.
@@ -246,26 +251,33 @@ def cmd_screen(a) -> int:
     rows = screen(lens, layers, threshold=a.threshold)
 
     print(f"{a.lens}")
-    print(f"  d_model {lens.d_model}   screening {len(layers)} layer(s) at "
-          f"threshold {a.threshold}")
+    cut = "" if a.threshold is None else f" at threshold {a.threshold}"
+    print(f"  d_model {lens.d_model}   screening {len(layers)} layer(s){cut}")
     print()
-    print(f"{'layer':>6}{'alpha':>9}{'identity':>10}  needs the full read?")
-    for r in rows:
-        mark = "yes" if r["worth_decomposing"] else "no"
-        print(f"{r['layer']:>6}{r['alpha']:>9.3f}{r['identity']:>10.3f}  {mark}")
+    head = f"{'layer':>6}{'alpha':>9}{'identity':>10}"
+    print(head + ("  needs the full read?" if a.threshold is not None else ""))
+    for r in sorted(rows, key=lambda x: -x["identity"]):
+        line = f"{r['layer']:>6}{r['alpha']:>9.3f}{r['identity']:>10.3f}"
+        if a.threshold is not None:
+            line += f"  {'yes' if r['worth_decomposing'] else 'no'}"
+        print(line)
 
-    flagged = [r["layer"] for r in rows if r["worth_decomposing"]]
     print()
-    if flagged:
-        print(f"{len(flagged)} of {len(rows)} layers carry enough identity to change the answer: "
-              f"{_runs(flagged)}")
-        print()
-        print(f"  entroptics-jlens audit {a.lens} --layers "
-              f"{','.join(str(x) for x in flagged)}")
+    if a.threshold is None:
+        top = max(rows, key=lambda x: x["identity"])
+        print(f"Highest share is {top['identity']:.3f} at layer {top['layer']}. The share is what")
+        print("predicts whether removing the identity changes the resolved count, and it is exact.")
+        print("Pass --threshold to turn it into a per-layer verdict.")
     else:
-        print(f"No layer reaches an identity share of {a.threshold}. Below that the corrected and")
-        print("both reads agree, so the raw transport is the same answer and the SVDs would buy")
-        print("nothing. Audit anyway if you want the spectra for another reason.")
+        flagged = [r["layer"] for r in rows if r["worth_decomposing"]]
+        if flagged:
+            print(f"{len(flagged)} of {len(rows)} layers are at or above {a.threshold}: "
+                  f"{_runs(flagged)}")
+            print()
+            print(f"  entroptics-jlens audit {a.lens} --layers "
+                  f"{','.join(str(x) for x in flagged)}")
+        else:
+            print(f"No layer reaches an identity share of {a.threshold}.")
     print()
     print("This read does no SVD. The share is exact -- tr(J)/d and one Frobenius norm -- and it")
     print("is the quantity that predicts the change rather than a proxy for it.")
@@ -291,11 +303,12 @@ def cmd_compare(a) -> int:
                          f"{right.source_layers}")
     layers = _layers(a.layers, shared)
     k = int(a.k)
+    agree_at = float(a.agree_at)
     print(f"left  {a.left}\nright {a.right}")
     print(f"  d_model {left.d_model}   layers fitted in both: {len(shared)}   "
           f"comparing top-{k} subspaces\n")
     print(f"{'layer':>6}{'agree_to':>10}{'cos_mean':>10}{'cos_min':>9}{'dPR(J-aI)':>12}"
-          f"{'d identity':>12}  reads as")
+          f"{'d identity':>12}")
 
     rows = []
     for l in layers:
@@ -306,35 +319,35 @@ def cmd_compare(a) -> int:
         pa, pb = participation_ratio(energy_spectrum(ma)), participation_ratio(energy_spectrum(mb))
         d_pr = (pb - pa) / pa if pa > 0 else float("nan")
         # How far into the spectrum the two still agree: the length of the leading prefix whose
-        # canonical cosines all clear AGREE_AT. This is the question principal angles are for,
+        # canonical cosines all clear `agree_at`. This is the question principal angles are for,
         # and it is a measurement rather than a threshold on a summary.
-        below = np.flatnonzero(c < AGREE_AT)
+        below = np.flatnonzero(c < agree_at)
         k_agree = int(below[0]) if below.size else k
-        # The verdict reads the MEAN, not the minimum. The minimum over k directions is a
-        # worst-case that two honest fits of one model do not survive: the two published
-        # Qwen3.5-4B fits (n=417, n=1000) read cos_min 0.0004 at layer 0 over k=400, because the
-        # 400th direction sits in the tail where fit noise dominates -- while their cos_mean over
-        # the same directions is 0.859 to 0.9985 across depth. Two unrelated maps of the same
-        # shape measure 0.166 and 0.191. SAME_MAP sits in the gap between those two measured
-        # populations; it is not tuned, and both are recorded in tests/test_cli.py.
-        verdict = ("same map" if float(c.mean()) > SAME_MAP else
-                   "drifted" if float(c.mean()) > DRIFTED else "different map")
-        rows.append({"layer": l, "k_agree": k_agree, "agree_at": AGREE_AT,
+        # Read the MEAN, not the minimum. The minimum over k directions is a worst case that two
+        # fits of one model do not survive: the two published Qwen3.5-4B fits (n=417, n=1000) read
+        # cos_min 0.0004 at layer 0 over k=400, because the 400th direction sits in the tail where
+        # fit noise dominates, while their cos_mean over the same directions is 0.859 to 0.9985.
+        rows.append({"layer": l, "k_agree": k_agree, "agree_at": agree_at,
                      "cos_mean": float(c.mean()), "cos_min": float(c.min()),
                      "pr_left": pa, "pr_right": pb, "pr_relative_change": d_pr,
-                     "identity_left": da.removed_energy, "identity_right": db.removed_energy,
-                     "verdict": verdict})
+                     "identity_left": da.removed_energy, "identity_right": db.removed_energy})
         print(f"{l:>6}{k_agree:>10}{c.mean():>10.4f}{c.min():>9.4f}{d_pr:>+12.1%}"
-              f"{db.removed_energy - da.removed_energy:>+12.3f}  {verdict}", flush=True)
+              f"{db.removed_energy - da.removed_energy:>+12.3f}", flush=True)
 
     print()
     worst = min(rows, key=lambda r: r["cos_mean"])
     print(f"the two agree least at layer {worst['layer']}: mean principal cosine "
           f"{worst['cos_mean']:.4f} over the top {k} directions, and they hold above "
-          f"{AGREE_AT} for {worst['k_agree']} of them.")
+          f"{agree_at} for {worst['k_agree']} of them.")
     print(f"Read agree_to, not cos_min. The smallest of {k} canonical cosines lands in the tail")
-    print("of the spectrum, where two honest fits of one model disagree freely; how far the")
-    print("agreement extends is the answer a scalar cannot give.")
+    print("of the spectrum, where two fits of one model disagree freely; how far the agreement")
+    print("extends is the answer a scalar cannot give.")
+    lo, hi = MEASURED_SAME_MODEL
+    ulo, uhi = MEASURED_UNRELATED
+    print()
+    print(f"For scale: two published fits of one model read cos_mean {lo}-{hi} across depth, and")
+    print(f"two unrelated maps of this construction read {ulo} and {uhi}. Nothing has been")
+    print("measured between those ranges, so the reading is yours to make.")
     print("\nThis read sees the map only -- it cannot say which of the two is better. For that,")
     print("run `coverage` against real streams.")
     if a.json:
@@ -497,9 +510,11 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("screen", help="which layers need the expensive read? no SVD")
     p.add_argument("lens", type=Path, help="a lens checkpoint")
     p.add_argument("--layers", default="all")
-    p.add_argument("--threshold", type=float, default=WORTH_DECOMPOSING,
-                   help=f"identity share above which a layer is flagged (default "
-                        f"{WORTH_DECOMPOSING})")
+    p.add_argument("--threshold", type=float, default=None,
+                   help="identity share above which to flag a layer. Omitted, the shares are "
+                        "reported without a verdict: where to divide them is the caller's call, "
+                        "and skipping a layer that mattered costs a result while reading one that "
+                        "did not costs an SVD")
     p.add_argument("--json", type=Path)
     p.set_defaults(func=cmd_screen)
 
@@ -508,6 +523,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("right", type=Path, help="another, of the same model width")
     p.add_argument("--layers", default="all")
     p.add_argument("--k", type=int, default=64, help="how far into the spectrum to compare")
+    p.add_argument("--agree-at", type=float, default=AGREE_AT,
+                   help=f"canonical cosine at or above which two directions count as shared; "
+                        f"sets what the agree_to column counts (default {AGREE_AT})")
     p.add_argument("--json", type=Path)
     p.set_defaults(func=cmd_compare)
 

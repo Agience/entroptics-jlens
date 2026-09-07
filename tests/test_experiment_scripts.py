@@ -28,7 +28,13 @@ def _is_script(tree: ast.Module) -> bool:
                for n in tree.body)
 
 
-@pytest.mark.parametrize("path", EXPERIMENTS, ids=lambda p: p.name)
+#: The runnable scripts. A helper is exempt by not having a `__main__` guard, which is the same
+#: property that makes it not runnable, so it is left out of the parametrisation rather than
+#: collected and skipped.
+RUNNABLE = [p for p in EXPERIMENTS if _is_script(_tree(p))]
+
+
+@pytest.mark.parametrize("path", RUNNABLE, ids=lambda p: p.name)
 def test_every_runnable_script_parses_its_arguments(path: Path):
     """A script without an ArgumentParser ignores `--help` and runs.
 
@@ -42,8 +48,6 @@ def test_every_runnable_script_parses_its_arguments(path: Path):
     makes them not runnable.
     """
     tree = _tree(path)
-    if not _is_script(tree):
-        pytest.skip(f"{path.name} is imported, not run: no __main__ guard")
     parses = any(isinstance(n, ast.Attribute) and n.attr == "ArgumentParser"
                  for n in ast.walk(tree))
     delegates = any(isinstance(n, ast.ImportFrom) and n.module and "cli" in n.module

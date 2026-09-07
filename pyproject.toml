@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "entroptics-jlens"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Jacobian lens carries a large identity component at depth, and a noise floor derived from the matrix it judges is inflated by it. This measures both, exactly, from the checkpoint alone."
 readme = "README.md"
 license = "Apache-2.0"

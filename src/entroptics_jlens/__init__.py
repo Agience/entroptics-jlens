@@ -52,8 +52,7 @@ from .coverage import Coverage, coverage, coverage_null_sample
 from .results import IncompleteResults, dump, load_complete
 from .targets import (centred_cosine, final_norm_weight, prenorm_direction,
                       rms_normalize)
-from .decompose import (Decomposition, decompose, identity_share, screen,
-                        WORTH_DECOMPOSING)
+from .decompose import (Decomposition, decompose, identity_share, screen)
 from .spectra import (energy_spectrum, participation_ratio, shannon_rank,
                       principal_angles, gram_spectrum, residual_gram)
 from .nulls import (SURROGATES, SampledFloor, sampled_floor, calibration_report,
@@ -76,7 +75,7 @@ __all__ = [
     "Coverage", "coverage", "coverage_null_sample", "truncated_pair",
     "centred_cosine", "final_norm_weight", "prenorm_direction", "rms_normalize",
     "IncompleteResults", "dump", "load_complete",
-    "Decomposition", "decompose", "identity_share", "screen", "WORTH_DECOMPOSING",
+    "Decomposition", "decompose", "identity_share", "screen",
     "energy_spectrum", "participation_ratio", "shannon_rank", "principal_angles",
     "gram_spectrum", "residual_gram",
     "SURROGATES", "SampledFloor", "sampled_floor", "calibration_report",

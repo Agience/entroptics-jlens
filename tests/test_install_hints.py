@@ -24,6 +24,10 @@ PYPROJECT = ROOT / "pyproject.toml"
 #: Third-party modules the package imports lazily rather than requiring at import time.
 OPTIONAL = {"torch", "huggingface_hub", "safetensors"}
 
+#: `frames.py` reaches for torch only to name a dtype on an object the caller already handed in as
+#: a torch tensor, so torch is necessarily importable there and there is no hint to give.
+NO_HINT_NEEDED = {"frames.py"}
+
 DOCS = [ROOT / "README.md", ROOT / "research" / "PAPER.md", ROOT / "CONTRIBUTING.md"]
 
 
@@ -51,14 +55,17 @@ def test_extras_and_hints_were_both_found():
     assert len(hinted_extras()) >= 3, f"parsed hints: {hinted_extras()}"
 
 
-def test_the_lazy_import_scan_finds_something():
-    """The other premise. `test_optional_imports_refuse_with_a_hint` skips any file with no lazy
-    optional import, so a broken detector would skip every file and report all green."""
-    carriers = [p.name for p in sorted(SRC.glob("*.py"))
-                if _optional_imports(ast.parse(p.read_text(encoding="utf-8")))]
-    assert len(carriers) >= 3, (
-        f"only {carriers} detected as importing {sorted(OPTIONAL)} lazily; the AST scan has "
-        f"drifted and the guard below is skipping everything")
+def test_the_lazy_import_scan_finds_the_modules_it_should():
+    """The other premise. `test_optional_imports_refuse_with_a_hint` is parametrised over what the
+    scan returns, so a broken detector would collect nothing and the suite would report all green
+    with the check never having run. Naming the modules makes a lost one fail too, not just an
+    empty scan."""
+    carriers = {p.name for p in sorted(SRC.glob("*.py"))
+                if _optional_imports(ast.parse(p.read_text(encoding="utf-8")))}
+    assert carriers == {"catalog.py", "frames.py", "io.py", "targets.py"}, (
+        f"the AST scan now reports {sorted(carriers)} as importing {sorted(OPTIONAL)} lazily; "
+        f"either a module changed or the detector has drifted")
+    assert {p.name for p in modules_with_optional_imports()} == carriers - NO_HINT_NEEDED
 
 
 @pytest.mark.parametrize("where,extra", hinted_extras(), ids=lambda v: str(v))
@@ -87,7 +94,19 @@ def _optional_imports(tree: ast.AST) -> list[ast.stmt]:
     return found
 
 
-@pytest.mark.parametrize("path", sorted(SRC.glob("*.py")), ids=lambda p: p.name)
+def modules_with_optional_imports() -> list[Path]:
+    """The modules this check is about: the ones that actually reach for an optional dependency.
+
+    Collected rather than filtered at run time, so the report says how many modules were checked
+    instead of how many were skipped. `test_the_lazy_import_scan_finds_something` fails if this
+    ever comes back empty or loses one of the modules that must be in it.
+    """
+    return [p for p in sorted(SRC.glob("*.py"))
+            if p.name not in NO_HINT_NEEDED
+            and _optional_imports(ast.parse(p.read_text(encoding="utf-8")))]
+
+
+@pytest.mark.parametrize("path", modules_with_optional_imports(), ids=lambda p: p.name)
 def test_optional_imports_refuse_with_a_hint(path: Path):
     """A lazy import of torch or huggingface_hub must be wrapped in a try/except that raises a
     message naming the extra. Otherwise the user gets a bare ModuleNotFoundError, which does not
@@ -95,18 +114,12 @@ def test_optional_imports_refuse_with_a_hint(path: Path):
     rather than guesses."""
     tree = ast.parse(path.read_text(encoding="utf-8"))
     lazy = _optional_imports(tree)
-    if not lazy:
-        pytest.skip(f"{path.name} imports none of {sorted(OPTIONAL)} lazily")
     handled = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Try):
             for sub in ast.walk(node):
                 handled.add(id(sub))
     unguarded = [n for n in lazy if id(n) not in handled]
-    # frames.py reaches for torch only to name a dtype on an object the caller already handed in
-    # as a torch tensor, so torch is necessarily importable there.
-    if path.name == "frames.py":
-        pytest.skip("torch is reached only through an object the caller already built with it")
     assert not unguarded, (
         f"{path.name} imports {sorted(OPTIONAL)} at lines "
         f"{sorted(n.lineno for n in unguarded)} without a try/except, so a user without the extra "

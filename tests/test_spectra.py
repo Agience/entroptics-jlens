@@ -139,7 +139,7 @@ def test_a_subspace_agrees_with_itself_exactly():
 
 def test_two_unrelated_maps_share_almost_nothing():
     """The other end of the scale `compare` reads. Two independent draws of one construction sit
-    far below the 0.8 mean that separates 'same map' from 'drifted'."""
+    an order of magnitude below the 0.8587 to 0.9985 that two fits of one model measure."""
     rng = np.random.default_rng(4)
     a, b = rng.standard_normal((128, 128)), rng.standard_normal((128, 128))
     assert float(je.principal_angles(a, b, k=16).mean()) < 0.5
