@@ -36,12 +36,14 @@ Both surprises measured on gpt2 are that one mechanism:
   * an identity core concentrates energy on the diagonal -- layers 7-9 above, fixed by
     ``decompose``;
   * a near rank-one spectrum concentrates it in one direction -- gpt2 layer 10, where
-    ``PR(J - alpha*I)`` is 1.5 and the real transport still resolves 39 against its shuffle's
-    44-51 over 8 seeds. Decomposition does not touch this one, and nothing here fixes it.
+    ``PR(J - alpha*I)`` is 1.5 and the real transport resolves 39 against its shuffle's 44-51
+    over 8 seeds -- the transport is nearly rank-one there, and one dominant direction
+    concentrates energy as an identity does, which is the same mechanism reaching the floor.
 
-So a control that removes structure will sometimes read HIGHER than the real matrix, and that is
-not evidence the real matrix is noise. It is the floor moving. Compare like with like: decompose
-first, and report ``PR`` beside ``K`` so a concentrated spectrum is visible rather than inferred.
+So a control that removes structure will sometimes read HIGHER than the real matrix, and that
+reading is the floor moving rather than a statement about the matrix. Compare like with like:
+decompose first, and report ``PR`` beside ``K`` so a concentrated spectrum is visible rather than
+inferred.
 """
 from __future__ import annotations
 

@@ -18,8 +18,8 @@ class FrameError(ValueError):
 def as_frame(X, *, name: str = "frame") -> np.ndarray:
     """``X`` (numpy array, torch tensor, or anything array-like) as a 2-D float64 numpy array.
 
-    Refuses rather than repairing: a non-2-D shape, an empty axis, or a non-finite cell is a
-    broken input, and a read taken on a silently patched frame is not a measurement.
+    Refuses rather than repairing: a non-2-D shape, an empty axis, or a non-finite cell stops
+    here, so every number downstream is a read of the frame the caller supplied.
     """
     A = X
     if hasattr(A, "detach"):                       # a torch tensor, on any device

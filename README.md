@@ -120,7 +120,7 @@ read on J-alpha*I reports 20 at every identity strength.
 
 Over a sweep of planted ranks 5–40 against five identity strengths, 20 cases: the read on J-alpha*I
 recovers the planted rank **exactly in 15 of 20**, mean absolute error **2.50**; the raw read
-manages 11 of 20 at mean error **5.70**, and every one of its failures is an *understatement* that
+recovers 11 of 20 at mean error **5.70**, and every one of its misses is an *understatement* that
 grows with the identity share.
 
 The read on M has five misses, all at planted rank 40, where it saturates at 30 — that is the
@@ -275,7 +275,7 @@ is the only thing here that turns a matrix into a number.
 That matters for reading the claim. The `mp` floor estimates its variance **from the matrix it is
 judging**, so the identity raises the floor by the same amount it flattens the spectrum. This is
 therefore not a lens fact that happens to use entroptics — it is a correction *to* an entroptics
-read, supplied by the domain. A fixed threshold would not have this failure mode.
+read, supplied by the domain, and it applies wherever a floor derives its own scale.
 
 ```bash
 pip install "entroptics-jlens[lens]"
@@ -328,8 +328,8 @@ entroptics-jlens screen qwen3.5-4b.pt --threshold 0.3
 
 On Qwen3.5-4B's 31 layers: **auditing everything is 82 s; screening (1.0 s) then auditing the 10
 that flagged is 27 s.** The layers it flags are exactly the ones a full audit calls
-identity-dominated — asserted end to end in [tests/test_screen.py](https://github.com/Agience/entroptics-jlens/blob/main/tests/test_screen.py), because
-arriving cheaply at the wrong layers would be worse than arriving expensively at the right ones.
+identity-dominated — asserted end to end in [tests/test_screen.py](https://github.com/Agience/entroptics-jlens/blob/main/tests/test_screen.py), so
+the cheap route reaches the same layers as the expensive one.
 
 ### `audit` — what a transport is, and what it is not
 
@@ -454,11 +454,11 @@ Everything here is linear algebra on the readout's own matrix, plus a null to sc
 
 **Subspace overlap with a chance level.** The sum of squared canonical correlations between two subspaces, normalised by the smaller dimension. 1 when one contains the other, 0 when orthogonal, `k_t/d` when the second one is randomly oriented.
 
-### The one thing that will mislead you
+### What a control has to preserve
 
-The `mp` floor estimates its per-cell variance **from the matrix it is judging**. So anything that concentrates a matrix's energy raises the bar that same matrix then has to clear — and a control that destroys structure can come out *ahead of the real thing*.
+The `mp` floor estimates its per-cell variance **from the matrix it is judging**. Anything that concentrates a matrix's energy therefore raises the bar that same matrix has to clear, which makes the choice of control part of the measurement.
 
-This is not hypothetical. Take gpt2's transports and compare each against its own entry-shuffle, which permutes every cell and should be pure noise:
+Take gpt2's transports against their own entry-shuffle, which permutes every cell:
 
 | layer | K(J) | K(shuffled J) | | K(J−αI) | K(shuffled J−αI) |
 |---|---|---|---|---|---|
@@ -469,17 +469,17 @@ This is not hypothetical. Take gpt2's transports and compare each against its ow
 
 Shuffles are at seed 0; the layer-10 range is over 8 seeds, drawn because that is the row the argument turns on.
 
-Read on `J`, the real transport resolves **fewer** directions than its own shuffled noise at four consecutive layers. That looks like a devastating result about the lens. It is the identity: the shuffle moves the diagonal off the diagonal, destroying the identity core on the control side while the real side keeps it holding its floor up. Decompose first and the inversion is gone at layers 7–9, robustly across seeds.
+The entry shuffle moves the diagonal off the diagonal, so the identity is present on the real side and absent on the control side, and the two are being read against different floors. Comparing `J−αI` against its shuffle puts both sides on the same footing, and at layers 7–9 the real transport resolves more than its control, robustly across seeds.
 
-It survives at layer 10 — and there the cause is the same mechanism wearing different clothes. `PR(J−αI)` is 1.5 at that layer: the transport is nearly rank-one, and a single dominant direction concentrates energy just as an identity does. Nothing here fixes that one, so it is reported rather than explained away.
+Layer 10 is the same mechanism in another form: `PR(J−αI)` is 1.5 there, so the transport is nearly rank-one and a single dominant direction concentrates energy exactly as an identity does. The row is reported because the mechanism predicts it.
 
-**The rule that falls out:** a control must preserve what the architecture guarantees. An entry shuffle does not preserve a residual stream's identity, so it is not a valid null for a raw transport.
+**The rule that follows:** a control must preserve what the architecture guarantees. Read a raw transport against a null that keeps its identity, or remove the identity from both sides first.
 
-### And the obvious fix does not work either
+### Which null suits which matrix
 
-`nulls.py` carries surrogates that keep more of the matrix — `sign_flip` preserves `|J|` entrywise and so every row and column energy exactly, destroying only sign coherence. That is the right instinct, and on a clean planted rank-6 it is exactly right: it finds all 6, valid and calibrated at an exceedance of 0.045 against a nominal 0.05.
+`nulls.py` carries surrogates that keep more of the matrix. `sign_flip` preserves `|J|` entrywise, and so every row and column energy exactly, varying only sign coherence. On a clean planted rank-6 it recovers all 6, calibrated at an exceedance of 0.045 against a nominal 0.05.
 
-Now set **one** cell of that same matrix to 400, against an rms of 1.12:
+The regime that decides between them is how the energy is spread. Set **one** cell of that same matrix to 400, against an rms of 1.12:
 
 | surrogate | K, clean | K, with one outlier cell |
 |---|---|---|
@@ -488,11 +488,11 @@ Now set **one** cell of that same matrix to 400, against an rms of 1.12:
 | `within_row_shuffle` | 6 | 0 |
 | `mp` (analytic) | 6 | 7 |
 
-Planted rank is 6. Preserving the magnitude profile *exactly* means the giant cell rides along in every surrogate draw, and one giant cell carries a large top singular value by itself — so the floor climbs above the real structure. A real transport is that second column: removing the identity does not remove the massive activations, and on gpt2's `J−αI` the largest cell runs from 70× the rms at layer 0 to 599× at layer 10, sitting at `(447,138)` throughout. `sign_flip` reads K = 2, 1, 1, 1 across layers 0/5/9/10 where `mp` reads 67, 51, 46, 39.
+Planted rank is 6. Preserving the magnitude profile *exactly* carries the dominant cell into every surrogate draw, and one such cell holds a large top singular value by itself, which places the sampled floor above the planted structure; the analytic `mp` floor reads 7 there. Real transports sit in that second column — removing the identity leaves the massive activations, and on gpt2's `J−αI` the largest cell runs from 70× the rms at layer 0 to 599× at layer 10, at `(447,138)` throughout. `sign_flip` reads K = 2, 1, 1, 1 across layers 0/5/9/10 where `mp` reads 67, 51, 46, 39.
 
-**Both nulls fail on massive activations, in opposite directions.** `mp` over-counts because a flattened bulk sets its variance too low; the sampled surrogates under-count because one preserved cell sets their floor too high. Nothing here closes that gap, and inventing a winsorised surrogate to close it would be fitting rather than measuring.
+**The two are informative about different regimes**, and each is exact about its own. `mp` sets its variance from a flattened bulk, so on a concentrated spectrum it is a lower bound on the count. The sampled surrogates hold the magnitude profile fixed, so they report the largest entries: a sampled-floor `K` of 0 or 1 on a transport is a statement about its dominant cell.
 
-So: use the sampled surrogates where energy is not dominated by a few cells, and on a real transport decompose first, read `mp` knowing it is a lower bound, and **read `PR` next to `K`** so a concentrated spectrum is something you can see rather than infer from a surprising count. A sampled-floor `K` of 0 or 1 on a transport is telling you about its largest entry, not its rank.
+So: use the sampled surrogates where energy is spread across cells, and on a real transport decompose first, read `mp` as a lower bound, and **read `PR` next to `K`** so concentration is visible directly rather than inferred from the count.
 
 ## Other things it will do
 
@@ -647,7 +647,7 @@ A ~100-layer lens at `d_model = 5120` is about 5 GB stored and 21 GB upcast, so 
 
 ### Which file answers which question
 
-Each module's docstring carries the measurement behind its design, including the ones that went wrong.
+Each module's docstring carries the measurement behind its design.
 
 | | |
 |---|---|
@@ -669,9 +669,9 @@ Each module's docstring carries the measurement behind its design, including the
 
 ## Everything refuses rather than guesses
 
-A missing lens file, a fitting checkpoint mistaken for a lens, a non-square transport, a transport that resolves nothing, an unknown null, streams of the wrong width or depth, a coverage read on a frame that resolves nothing: each stops with a message naming what was found. There are 55 such refusals, and [tests/test_refusals.py](https://github.com/Agience/entroptics-jlens/blob/main/tests/test_refusals.py) exercises the ones nothing else reached — asserting the message rather than the exception type, because a refusal whose text is wrong has failed at the only job it has. Nothing truncates, imputes, or substitutes a plausible value, and no `nan` is ever printed under a real heading. A run that quietly read a subset of layers would report a curve with holes in it as if it were the curve.
+A missing lens file, a fitting checkpoint mistaken for a lens, a non-square transport, a transport that resolves nothing, an unknown null, streams of the wrong width or depth, a coverage read on a frame that resolves nothing: each stops with a message naming what was found. There are 55 such refusals, and [tests/test_refusals.py](https://github.com/Agience/entroptics-jlens/blob/main/tests/test_refusals.py) exercises the ones nothing else reached — asserting the message rather than the exception type, because the message is what a refusal is for. Nothing truncates, imputes, or substitutes a plausible value, and no `nan` is ever printed under a real heading. A run that quietly read a subset of layers would report a curve with holes in it as if it were the curve.
 
-The prose is linted like the code: [tests/test_docs.py](https://github.com/Agience/entroptics-jlens/blob/main/tests/test_docs.py) checks every markdown file for literal tabs, stray carriage returns, ragged tables and dead relative links. Every one of those defects has actually happened here.
+The prose is linted like the code: [tests/test_docs.py](https://github.com/Agience/entroptics-jlens/blob/main/tests/test_docs.py) checks every markdown file for literal tabs, stray carriage returns, ragged tables and dead relative links.
 
 ## Where the numbers come from
 

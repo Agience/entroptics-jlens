@@ -25,7 +25,7 @@ The pre-norm residual is recoverable without re-running the model. RMSNorm is
     y = (x / rms(x)) * w        elementwise in w
 
 so ``y / w`` is ``x`` at unit rms: the direction exactly, with only the per-token scale lost. That
-needs one vector from the checkpoint rather than the weights. Direction is the right target anyway --
+needs one vector from the checkpoint rather than the weights, and direction is the right target:
 the unembedding is linear, so direction is what fixes the logits up to a scale.
 """
 from __future__ import annotations
@@ -108,9 +108,9 @@ def centred_cosine(predicted, target) -> float:
 def rms_normalize(frame, w) -> np.ndarray:
     """Apply an RMSNorm with gain ``w``, the operation the readout performs.
 
-    This is the honest way to compare a transport with the model's final residual, and it is
-    cheaper than the alternative: rather than undoing the norm on the target, apply it to the
-    prediction, so both sides are the object the unembedding actually consumes.
+    This puts a transport and the model's final residual in the same space, and it is the
+    cheaper direction: rather than undoing the norm on the target, apply it to the prediction, so
+    both sides are the object the unembedding actually consumes.
 
     The model's logits are ``head(rms_normalize(x, w))``; a lens's are
     ``head(rms_normalize(J h, w))``. Comparing those two is comparing what is read, and it removes

@@ -53,10 +53,10 @@ rank-10 case is unaffected.  **``K`` is a lower bound on the resolved rank**, an
 loosest exactly where the answer matters -- a real transport reading ``K ~ 25`` could be
 carrying more.
 
-**``robust`` is not a second opinion about the same quantity, and the sentence that used to
-stand here said it was.**  It said ``robust`` "recovers weak modes the signal's own energy would
-otherwise hide", which is what the planted-rank table above shows at ``d = 256`` and is false on
-real transports.  ``null_providers.robust`` is the Tukey upper fence ``Q3 + 1.5*(Q3 - Q1)`` of
+**``robust`` answers a different question from ``mp``.**  It recovers weak modes the signal's own
+energy would otherwise hide in the planted-rank table above at ``d = 256``; on real transports it
+describes the shape of the spectrum instead.  ``null_providers.robust`` is the Tukey upper fence
+``Q3 + 1.5*(Q3 - Q1)`` of
 the SINGULAR SPECTRUM, and its own docstring in the library calls it "a heuristic outlier fence
 for heavy-tailed spectra (not a calibrated null)".  Two consequences, on gpt2's identity-free
 transports:

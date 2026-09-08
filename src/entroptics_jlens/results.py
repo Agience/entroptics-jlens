@@ -34,8 +34,8 @@ def code_version() -> str:
     Cached for the life of the process. It spawns two ``git`` subprocesses, measured at 117-197 ms
     per call, and ``dump`` is called once per layer by design -- a 31-layer sweep was paying about
     four seconds for the same answer 31 times. Caching also pins the stamp to what the tree held
-    when the run began, which is the more honest reading of "the commit these numbers were
-    produced by" for a run that outlives an edit.
+    when the run began, which is what "the commit these numbers were produced by" names for a run
+    that outlives an edit.
 
     Recorded because the alternative was measured. A committed exp4 result was rebuilt from its
     own provenance block -- same model, same lens hash, same prompt count, same library versions,

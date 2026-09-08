@@ -1,14 +1,11 @@
 """Coverage: how much of a signal's resolved subspace a readout actually spans.
 
-This replaces the complement read, which measured the wrong thing. ``Screen.uncondensed``
-removes the receiver's directions and then re-reads the residual frame from scratch, and that
-re-read whitens per channel. Whitening varies under projection -- removing a dominant direction
-rescales every channel and can lift other modes above the floor -- so the mode count after
-projection falls by some other amount than the number of directions removed. Measured: it failed an
-analytic benchmark where the overlap was exact by construction, and returned the same answer for
-a random matrix as for the real one.
+Subspace overlap measured directly, on the frames as they stand. A count of modes taken after
+projecting a frame carries the whitening the re-read applies: whitening varies under projection,
+since removing a dominant direction rescales every channel, so such a count moves by an amount set
+by the rescaling as well as by the directions removed. Overlap is read here without a re-read.
 
-The quantity actually wanted is a subspace overlap, and it has a standard form:
+The quantity is a subspace overlap, and it has a standard form:
 
     coverage = || V_s^T V_t ||_F^2 / k_s
 
@@ -22,10 +19,10 @@ inside the readout's, and ``0`` when they are orthogonal.
 
     E[coverage under the null] = k_t / d
 
-That baseline is what the old read lacked. At ``d = 768`` with a readout spanning ~20 directions
-the null coverage is ~2.6%, which is to say ~97% of a signal lies "outside" a random readout by
-chance alone. Reporting that as a finding is what went wrong; reporting coverage against its null
-is what fixes it.
+The null is what makes a coverage number readable. At ``d = 768`` with a readout spanning ~20
+directions the null coverage is ~2.6%, which is to say ~97% of a signal lies "outside" a random
+readout by chance alone. Coverage is therefore reported against ``null`` and ``excess``, which put
+chance at 0 and full span at 1.
 """
 from __future__ import annotations
 

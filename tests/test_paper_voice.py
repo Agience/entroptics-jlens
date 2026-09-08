@@ -1,13 +1,16 @@
-"""The paper states what is true now, positively, and does not narrate its own history.
+"""Every prose surface states what is true now, positively, and does not narrate its own history.
 
 The rules are `skills/doc-current-state`: no change history, failure narration, self-justification,
-hedging, defensive framing, or spurious negation. A paper that says a result was withdrawn, or
-that a package "was wrong", spends its credibility describing its drafts instead of its evidence.
+hedging, defensive framing, or spurious negation. Text that says a result was withdrawn, or that a
+read "was wrong", spends its credibility describing its drafts instead of its evidence. What a
+reader needs is what each read measures and the range it holds over.
 
-The vocabulary below is banned outright rather than judged in context. Each entry was in the paper
-and each was replaceable by a positive statement of the same fact -- "the read on $J$" for "the
-uncorrected read", "what bounds the measurement" for "the library's own limits". A word that has
-an honest use here would need an exemption, and none has needed one yet.
+Checked across the paper, the README, CONTRIBUTING, the experiments index and the package's own
+docstrings. Guarding the paper alone leaves the surface most readers actually meet unguarded.
+
+The vocabulary below is banned outright rather than judged in context. Each entry appeared in one
+of these files and each was replaceable by a positive statement of the same fact -- "the read on
+$J$" for "the uncorrected read", "what bounds the measurement" for "the library's own limits".
 """
 from __future__ import annotations
 
@@ -23,6 +26,14 @@ PAPER = ROOT / "research" / "PAPER.md"
 # part of the distribution, so the module skips instead.
 if not PAPER.exists():                                           # pragma: no cover - sdist
     pytest.skip("the paper is a repository file and is not shipped", allow_module_level=True)
+
+
+def prose_files() -> list[Path]:
+    """Every file whose wording a reader meets: the prose, and the docstrings behind `help()`."""
+    docs = [PAPER, ROOT / "README.md", ROOT / "CONTRIBUTING.md",
+            ROOT / "research" / "experiments" / "README.md"]
+    return [p for p in docs + sorted((ROOT / "src" / "entroptics_jlens").glob("*.py"))
+            if p.exists()]
 
 #: phrase -> what to write instead.
 BANNED = {
@@ -53,6 +64,22 @@ BANNED = {
     "no claim is made": "state the question as open",
     "nothing here shows": "state what the reads cover",
     "is a judgement": "state which quantity carries the result",
+    # Narrating what did not work. The measurement that came of it is worth stating; the account
+    # of arriving at it describes the work rather than the result.
+    "does not work": "state the regime each read is right about",
+    "doesn't work": "state the regime each read is right about",
+    "went wrong": "state what the read measures",
+    "measured the wrong thing": "state what the present read measures",
+    "obvious fix": "name the method and where it applies",
+    # "failure mode" is deliberately absent. It is a technical term with a real use here -- the
+    # paper probes opposite failure modes of a degradation, and cites a known one from the
+    # literature -- and banning it would forbid describing a method's behaviour.
+    "not hypothetical": "give the measurement without the preamble",
+    "explained away": "state the mechanism",
+    "has actually happened": "state what the check covers",
+    "devastating": "state the number and its cause",
+    "nothing here fixes": "state what the read establishes",
+    "nothing here closes": "state what each read is exact about",
 }
 
 
@@ -67,13 +94,26 @@ def test_the_paper_is_there_to_check():
     assert "## Abstract" in t and "## References" in t
 
 
+def test_every_prose_surface_is_there_to_check():
+    """The same premise for the wider sweep. A collection that came back short would pass the
+    check below while leaving most of the words a reader meets unread."""
+    files = prose_files()
+    names = {p.name for p in files}
+    assert {"PAPER.md", "README.md", "CONTRIBUTING.md"} <= names, sorted(names)
+    assert len(files) >= 18, f"only {len(files)} prose files collected: {sorted(names)}"
+
+
 @pytest.mark.parametrize("phrase", sorted(BANNED))
-def test_the_paper_does_not_narrate_its_own_history(phrase: str):
-    t = text().lower()
-    hits = [m.start() for m in re.finditer(re.escape(phrase), t)]
-    where = [t[max(0, i - 60):i + 60].replace("\n", " ") for i in hits[:3]]
-    assert not hits, (
-        f"{len(hits)} use(s) of {phrase!r}; instead {BANNED[phrase]}. Context: {where}")
+def test_no_prose_surface_narrates_its_own_history(phrase: str):
+    """The paper and everything else a reader meets, including the docstrings behind `help()`."""
+    found = []
+    for path in prose_files():
+        t = path.read_text(encoding="utf-8").lower()
+        for m in list(re.finditer(re.escape(phrase), t))[:2]:
+            i = m.start()
+            found.append(f"{path.name}: ...{t[max(0, i - 55):i + 55]!r}...".replace("\n", " "))
+    assert not found, (
+        f"{len(found)} use(s) of {phrase!r}; instead {BANNED[phrase]}.\n  " + "\n  ".join(found))
 
 
 def test_the_title_states_a_mechanism_rather_than_a_fault_or_a_headline_ratio():

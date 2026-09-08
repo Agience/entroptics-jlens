@@ -8,8 +8,8 @@ rank-``K`` truncation is a genuine inverse conversion, so ``certify``, ``realise
 ``linear`` all mean something.
 
 The vocabulary readout is the OTHER basis (``D = |vocabulary|``) and therefore the other screen.
-It is registered entry-only: there is no honest inverse from logits back to a residual, and
-declaring one would put a fabricated conversion where a measurement belongs.
+It is registered entry-only: no inverse from logits back to a residual is defined, and declaring
+one would put a fabricated conversion where a measurement belongs.
 
 Every line of domain code in this package lives in this module and in ``io``.  The library
 stays domain-agnostic; nothing here is proposed for it.
@@ -286,14 +286,13 @@ def complement(ls: LayerScreen) -> Projection:
     outside what the receiver resolves, and ``K_signal`` counts the modes standing above the
     noise floor there.
 
-    **Read the scope before using this number.** It was once this package's headline read, and
-    the headline was wrong. It reported that 92-102% of a residual stream's resolved structure
-    lies outside the transport, stable across six models in four families -- and a
-    matched-spectrum surrogate and a random rank-K matrix return the same ~100%. In 2560
-    dimensions two unaligned low-dimensional subspaces are near-orthogonal by default, so the
-    read was returning its own null and the replication was the stability of that null
-    (benchmark B3). Benchmark B2, where the overlap is exact by construction, is kept as a
-    strict xfail so the boundary stays visible.
+    **Read the scope before using this number.** On real transports it reports that 92-102% of a
+    residual stream's resolved structure lies outside the transport, stable across six models in
+    four families -- and a matched-spectrum surrogate and a random rank-K matrix return the same
+    ~100%. In 2560 dimensions two unaligned low-dimensional subspaces are near-orthogonal by
+    default, so that figure is the value of the null at this width and the stability across models
+    is the stability of the null (benchmark B3). Use ``coverage``, which measures the overlap
+    against that chance level, when the question is how much of a stream a readout reaches.
 
     The mechanism is that ``uncondensed`` re-reads the residual frame from scratch after removing
     the receiver's directions, and that re-read whitens per channel; whitening varies under
