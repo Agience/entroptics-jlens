@@ -43,6 +43,14 @@ Engine = "https://pypi.org/project/entroptics/"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+# ⚠ `include` ANCHORS DISCOVERY, and without it this distribution is safe only by accident of
+# layout. `src/` happens to hold nothing but `entroptics_jlens/` today; the day it also holds
+# `tests/`, setuptools writes that into `top_level.txt` and ships it, so `pip install` would put a
+# top-level `tests` module into site-packages and squat the name for every other package there.
+# agience-crystal 0.1.0 did exactly that and its `top_level.txt` still shows it. Every other
+# packaged repo in this workspace carries this line; adding it changes nothing about the current
+# wheel (verified 2026-09-16, file list identical).
+include = ["entroptics_jlens*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
