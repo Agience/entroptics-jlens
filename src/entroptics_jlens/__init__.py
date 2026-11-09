@@ -35,8 +35,8 @@ two fits agree; ``coverage`` measures overlap with a real stream against an anal
 the columns above side by side.
 
 **What it does not do.** Six independent attempts to turn one of these reads into a PREDICTION have
-failed -- escalation, abstention, probe placement, the complement read, quantisation cost, and
-subspace summarisation. The reads are exact about geometry and
+failed -- escalation, abstention, probe placement, the complement read, quantization cost, and
+subspace summarization. The reads are exact about geometry and
 no test has yet connected the geometry to a downstream outcome. The claim above survives precisely
 because it forecasts nothing: it is a statement about what the matrix is.
 """

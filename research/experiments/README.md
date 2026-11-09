@@ -60,6 +60,8 @@ maintained by hand, so this table cannot drift from what is actually here.
 | [`exp54_sweep_and_depth.py`](exp54_sweep_and_depth.py) | The two robustness tables of section 1: the false-alarm sweep and the depth profile. |
 | [`exp56_variance_estimator.py`](exp56_variance_estimator.py) | Sweeps the floor's variance estimator over the quantile family, the last free parameter in the count. |
 | [`exp55_structure_free_control.py`](exp55_structure_free_control.py) | How much of the change in resolved count is a property of the transport? |
+| [`exp57_permutation_control.py`](exp57_permutation_control.py) | The permutation control of section 3.3, both tables, over a range of shuffle seeds. |
+| [`exp58_complement_surrogates.py`](exp58_complement_surrogates.py) | The complement read of sections 6.1 and 6.2, set beside the matched-spectrum surrogate. |
 | [`depth_report.py`](depth_report.py) | The depth-profile page: one curve per model, plotted against relative depth. |
 | [`fetch_lens.py`](fetch_lens.py) | Download a published Jacobian lens. |
 | [`live_report.py`](live_report.py) | A self-contained local page that fills in while the run is going. |

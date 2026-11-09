@@ -83,7 +83,7 @@ def shape_factor(A: np.ndarray, s: np.ndarray, far: float) -> float:
     pair return the same ``C``, which they can only do if ``sigma2_published`` is the estimator the
     engine actually uses.
     """
-    return float(noise_floor(A, far=far, s=s)) ** 2 / sigma2_published(A)
+    return float(noise_floor(A, far=far, null=je.NULLS["mp"], s=s)) ** 2 / sigma2_published(A)
 
 
 def k_at(A: np.ndarray, s: np.ndarray, p: float | None, far: float, C: float) -> int:

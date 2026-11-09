@@ -69,10 +69,11 @@ class Coverage:
 def _resolved_basis(W, far: float = 0.05):
     """An orthonormal basis for the directions ``W`` resolves above its own noise floor."""
     from entroptics.projection import noise_floor
+    from .transport import NULLS
 
     A = as_frame(W, name="frame")
     U, s, Vt = np.linalg.svd(A, full_matrices=False)
-    k = int((s > float(noise_floor(A, far=far, s=s))).sum())
+    k = int((s > float(noise_floor(A, far=far, null=NULLS["mp"], s=s))).sum())
     return Vt[:k].T, k
 
 

@@ -15,6 +15,7 @@
         "4": 0.8669089835324821,
         "3": 0.7680644190948758
       },
+      "undefined": {},
       "pr_worst_bits": 48.62933974744441
     },
     {
@@ -22,8 +23,12 @@
       "pr": 40.98842029676689,
       "agreement": {
         "8": 0.9918237866385455,
-        "4": 0.37833107774296637,
-        "3": 0.32761493419647714
+        "4": null,
+        "3": null
+      },
+      "undefined": {
+        "4": "k=64 splits a run of equal singular values of B (s_64 - s_65 = 2.22e-16, round-off 1.69e-13): its top-64 subspace is not defined",
+        "3": "k=64 exceeds the numerical rank of B (10 singular values above round-off 1.65e-13): its top-64 subspace is not defined"
       },
       "pr_worst_bits": 5.033031034195863
     },
@@ -33,7 +38,10 @@
       "agreement": {
         "8": 0.9968785664865452,
         "4": 0.5849048511324962,
-        "3": 0.329387786538068
+        "3": null
+      },
+      "undefined": {
+        "3": "k=64 exceeds the numerical rank of B (62 singular values above round-off 9.11e-14): its top-64 subspace is not defined"
       },
       "pr_worst_bits": 4.982576990225544
     },
@@ -43,7 +51,10 @@
       "agreement": {
         "8": 0.9981294800758758,
         "4": 0.6674450600839206,
-        "3": 0.3485231106538742
+        "3": null
+      },
+      "undefined": {
+        "3": "k=64 splits a run of equal singular values of B (s_64 - s_65 = 0, round-off 8.32e-14): its top-64 subspace is not defined"
       },
       "pr_worst_bits": 4.9456303967943995
     },
@@ -55,6 +66,7 @@
         "4": 0.7856071467969767,
         "3": 0.37762303004050546
       },
+      "undefined": {},
       "pr_worst_bits": 18.48756812708611
     },
     {
@@ -65,6 +77,7 @@
         "4": 0.726336327824406,
         "3": 0.3489373846682694
       },
+      "undefined": {},
       "pr_worst_bits": 9.292937564951732
     },
     {
@@ -75,6 +88,7 @@
         "4": 0.8506281278118959,
         "3": 0.4291626531241968
       },
+      "undefined": {},
       "pr_worst_bits": 67.12771703354056
     },
     {
@@ -85,6 +99,7 @@
         "4": 0.7696117600875618,
         "3": 0.3787546310004893
       },
+      "undefined": {},
       "pr_worst_bits": 14.261661848573096
     },
     {
@@ -93,7 +108,10 @@
       "agreement": {
         "8": 0.9983550242374774,
         "4": 0.6502423450665822,
-        "3": 0.3177329253127871
+        "3": null
+      },
+      "undefined": {
+        "3": "k=64 splits a run of equal singular values of B (s_64 - s_65 = 0, round-off 1.24e-13): its top-64 subspace is not defined"
       },
       "pr_worst_bits": 2.9371734707440056
     },
@@ -105,6 +123,7 @@
         "4": 0.7501738605697869,
         "3": 0.40646278992569557
       },
+      "undefined": {},
       "pr_worst_bits": 69.15424594642651
     },
     {
@@ -113,7 +132,10 @@
       "agreement": {
         "8": 0.991294763581569,
         "4": 0.44291516470194353,
-        "3": 0.29686945293754463
+        "3": null
+      },
+      "undefined": {
+        "3": "k=64 exceeds the numerical rank of B (13 singular values above round-off 2.06e-13): its top-64 subspace is not defined"
       },
       "pr_worst_bits": 1.407104025859536
     },
@@ -122,13 +144,17 @@
       "pr": 27.206567259008676,
       "agreement": {
         "8": 0.9620884005999126,
-        "4": 0.3893039126906699,
-        "3": 0.3341052999323916
+        "4": null,
+        "3": null
+      },
+      "undefined": {
+        "4": "k=64 splits a run of equal singular values of B (s_64 - s_65 = 2.22e-16, round-off 3.38e-13): its top-64 subspace is not defined",
+        "3": "k=64 exceeds the numerical rank of B (11 singular values above round-off 3.2e-13): its top-64 subspace is not defined"
       },
       "pr_worst_bits": 4.19461415835962
     }
   ],
-  "spearman_pr_vs_damage": 0.4545454545454546,
-  "code_commit": "9f7dd6f+dirty",
+  "spearman_pr_vs_damage": -0.48571428571428577,
+  "code_commit": "aa84426+dirty",
   "complete": true
 }

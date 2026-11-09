@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "entroptics-jlens"
-version = "0.1.3"
+version = "0.1.4"
 description = "A Jacobian lens carries a large identity component at depth, and a noise floor derived from the matrix it judges is inflated by it. This measures both, exactly, from the checkpoint alone."
 readme = "README.md"
 license = "Apache-2.0"
@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
-dependencies = ["numpy>=2.0", "entroptics>=0.2.1"]
+dependencies = ["numpy>=2.0", "entroptics>=0.2.10"]
 
 [project.optional-dependencies]
 # Reading a published lens: the checkpoints are torch serializations and live on the Hub.

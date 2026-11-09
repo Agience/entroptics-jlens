@@ -59,11 +59,10 @@ def wikitext_prompts(tok, n: int, tokens: int, skip: int = 0) -> list:
     published lenses were fitted on, so the streams match the fit distribution.
 
     ``skip`` discards the first ``skip`` sequences, which is how a *second sample* is drawn. Every
-    run took the same leading sequences until this existed, so rerunning an experiment reproduced
-    its prompts exactly and could never test whether a number survived a different draw. It does
-    not always: sec 7.1's claim that gemma-3-1b's complement removes exactly the transport's
-    carried rank held on the first eight sequences and gave 9.9 against 12.0 on another eight,
-    because the removal has a per-prompt standard deviation of 5.7.
+    run with ``skip=0`` takes the same leading sequences, so a rerun reproduces its prompts
+    exactly; a nonzero ``skip`` tests whether a number survives a different draw. The complement
+    removal varies from prompt to prompt by a standard deviation of about one direction at
+    gemma-3-1b's layer 0, so a figure read on one eight-sequence draw is checked on another.
     """
     from datasets import load_dataset
     ds = load_dataset("Salesforce/wikitext", "wikitext-2-raw-v1", split="test")
@@ -246,6 +245,27 @@ def verify_alignment(offset, scores, tops) -> None:
           f"output) -- {note}")
 
 
+def matched_spectrum_surrogate(J_used, seed: int):
+    """``J_used``'s singular values on Haar-random frames, with its exact pseudo-inverse.
+
+    The control for the complement read. The surrogate keeps everything about the transport that
+    is not its alignment with the stream -- rank, spectrum, scale -- so the stream modes its
+    complement removes are what the read removes from a transport that shares no directions with
+    the stream by construction. The inverse is built from the same factors, as ``truncated_pair``
+    builds its own, so the round trip stays an orthogonal projector.
+    """
+    U, s, Vt = np.linalg.svd(np.asarray(J_used, dtype=np.float64), full_matrices=False)
+    k = int(np.sum(s > s[0] * max(J_used.shape) * np.finfo(np.float64).eps))
+    rng = np.random.default_rng(seed)
+
+    def frame(n):
+        Q, R = np.linalg.qr(rng.standard_normal((n, k)))
+        return Q * np.sign(np.diag(R))
+
+    A, B = frame(J_used.shape[0]), frame(J_used.shape[1])
+    return (A * s[:k]) @ B.T, (B / s[:k]) @ A.T
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--model", required=True, help="a HuggingFace decoder, e.g. gpt2")
@@ -253,10 +273,8 @@ def main(argv=None) -> int:
     ap.add_argument("--prompts", type=int, default=8)
     ap.add_argument("--tokens", type=int, default=128)
     ap.add_argument("--skip", type=int, default=0,
-                    help="discard this many leading sequences, to draw a SECOND sample. "
-                         "Every run took the same leading prompts until this existed, so "
-                         "rerunning could never test whether a number survives a "
-                         "different draw -- and sec 7.1's did not.")
+                    help="discard this many leading sequences, to draw a second sample "
+                         "and test whether a number survives a different draw")
     ap.add_argument("--far", type=float, default=0.05)
     ap.add_argument("--layers", default="all")
     ap.add_argument("--dump-streams", type=Path, default=None,
@@ -275,8 +293,15 @@ def main(argv=None) -> int:
     ap.add_argument("--rank", default="pr",
                     help="transport rank: 'pr' (participation ratio of J-aI, "
                          "threshold-free), 'full', 'resolved', or an int")
+    ap.add_argument("--surrogate", type=int, default=None, metavar="SEED",
+                    help="replace each truncated transport by a matched-spectrum surrogate: "
+                         "the same singular values on Haar-random left and right frames. "
+                         "The complement of a surrogate is what the read gives a transport "
+                         "that shares nothing with the stream, at this rank and spectrum")
     ap.add_argument("--out", type=Path, default=None)
     a = ap.parse_args(argv)
+    if a.surrogate is not None and any(v.strip() == "full" for v in a.rank.split(",")):
+        raise SystemExit("refusing: --surrogate needs a truncated rank, not 'full'")
 
     import torch
     import transformers
@@ -391,7 +416,7 @@ def main(argv=None) -> int:
              "alignment_top1": {str(k): v for k, v in tops.items()},
              "prompts": len(streams), "tokens": a.tokens, "far": a.far,
              "prompt_skip": a.skip, "prompt_fingerprint": prompt_fp,
-             "rank_specs": specs, "corpus": "Salesforce/wikitext wikitext-2-raw-v1 test",
+             "rank_specs": specs, "surrogate_seed": a.surrogate, "corpus": "Salesforce/wikitext wikitext-2-raw-v1 test",
              "model_dtype_source": str(src_dtype), "model_dtype_used": "torch.float32",
              "device": a.device,
              "environment": {"python": platform.python_version(), "numpy": np.__version__,
@@ -443,6 +468,8 @@ def main(argv=None) -> int:
                 J_used, J_pinv = je.truncated_pair(J, spec_.K)
             else:
                 J_used, J_pinv = je.truncated_pair(J, rank)
+            if a.surrogate is not None:
+                J_used, J_pinv = matched_spectrum_surrogate(J_used, a.surrogate + l)
             J_spec = je.transport_spectrum(J_used, far=a.far)
             per = []
             for s in streams:

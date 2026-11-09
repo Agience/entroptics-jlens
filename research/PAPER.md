@@ -2,7 +2,7 @@
 
 **Ikailo John Sessford**, Ikailo Inc., `john@ikailo.com`
 
-*Pre-print. September 2026.* [doi:10.5281/zenodo.22293929](https://doi.org/10.5281/zenodo.22293929)
+*Version 0.1.4. November 2026.* [doi:10.5281/zenodo.22293929](https://doi.org/10.5281/zenodo.22293929)
 
 ---
 
@@ -125,7 +125,7 @@ computed from that spectrum. The modes between the old floor and the new one dis
 The division of labour is this.
 `decompose` is not an Entroptics read — it is $\operatorname{tr}(J)/d$ and a subtraction, carrying
 the *domain* fact that a residual stream adds. Entroptics supplies the *measurement*: `noise_floor`
-under `null_providers.mp` is the only thing here that turns a matrix into a number, and every
+under `null_providers.mp_median` is the only thing here that turns a matrix into a number, and every
 figure in the table above is one of its counts. The claim is a precondition for that read, supplied
 by the domain it is pointed at.
 
@@ -255,7 +255,7 @@ moves the edge by about $1.3\%$. The sweep demonstrates that the one parameter a
 the one that cannot matter.
 
 The quantity the count *is* sensitive to is the variance estimate $\hat\sigma$, which
-`null_providers.mp` takes as a de-biased median row energy. A $\pm10\%$ change in $\hat\sigma$ moves
+`null_providers.mp_median` takes as a de-biased median row energy. A $\pm10\%$ change in $\hat\sigma$ moves
 $K$ at Qwen3.5-4B layer 30 from 222 to 150, against the $\pm5$ the false-alarm sweep produces. The
 identity acts on exactly that quantity: it adds $\alpha^2$ to every row's energy, which is the one
 contribution a median over rows cannot reject. That is the mechanism of §1.1, stated as the
@@ -384,7 +384,7 @@ unpruned:
 |---|---|
 | 6 | `senal`, ` pione`, and six undecodable byte fragments |
 | 10 | `` ' ``, `]`, ` ...`, ` "`, ` [`, `)`, ` `, `"` |
-| 15 | `.''.`, ` Malk`, *(one undecodable fragment)*, `''.`, `.」`, ` lineback`, ` Tuls`, ` challeng` |
+| 15 | `.''.`, ` Malk`, *(one undecodable fragment)*, `''.`, `.` followed by U+300D, ` lineback`, ` Tuls`, ` challeng` |
 | 19 | `theless`, ` arrang`, `basketball`, ` glim`, ` sugg`, ` Nuggets`, ` Fei`, ` misunder` |
 | 24 | ` USDA`, ` Veter`, ` NB`, ` SNAP`, ` UD`, ` FALSE`, ` IB`, ` BAR` |
 | 28 | *(one undecodable byte fragment)*, ` Adin`, ` pestic`, ` nutrit`, ` ingested`, ` Nieto`, ` pathogens`, ` Yosemite` |
@@ -453,14 +453,14 @@ on one trace and one subtraction.
 ## 2. What Entroptics supplies
 
 This work is a domain wrapper over Entroptics [Sessford 2026], installed from PyPI as
-`entroptics>=0.2.1` (Apache-2.0). The division is worth being exact about, because the result in §1
+`entroptics>=0.2.10` (Apache-2.0). The division is worth being exact about, because the result in §1
 is a precondition *for* an Entroptics read rather than a result that merely happens to use one.
 
 ### 2.1 What the library provides
 
 | what | used for |
 |---|---|
-| `projection.noise_floor` with `null_providers.mp` | **the resolved rank.** $K=\#\{\sigma_k>\text{floor}\}$ against the derived finite-size Marchenko–Pastur / Tracy–Widom edge at a stated false-alarm rate. Every $K$ in this paper is one of its counts. |
+| `projection.noise_floor` with `null_providers.mp_median` | **the resolved rank.** $K=\#\{\sigma_k>\text{floor}\}$ against the derived finite-size Marchenko–Pastur / Tracy–Widom edge at a stated false-alarm rate. Every $K$ in this paper is one of its counts. |
 | `projection.mode_significance` | per-mode Tracy–Widom deviates and $p$-values, which let a count be re-taken at another rate without recomputing a spectrum |
 | `null_providers.floor_from_null_sampler` | the contract by which a caller supplies its own null mechanism and the library keeps the quantile — how the magnitude-preserving surrogates of §5 become providers |
 | `null_providers.robust` | a Tukey upper fence on the spectrum, documented as a heuristic for heavy-tailed spectra and not a calibrated null. It carries no false-alarm rate: sweeping $\alpha_{\text{FA}}$ from $0.5$ to $10^{-6}$ leaves its floor at $2.40679$ to five decimals while `mp`'s moves. Reported alongside `mp` where the two disagree, and never as a second estimate of the same quantity. |
@@ -559,13 +559,13 @@ A scalar floor summarises that with one number; principal angles give it per dim
 
 ### 3.3 What a permutation control shows
 
-A distribution-free control locates the behaviour. Permuting $J$'s entries destroys all rank structure while preserving the entry distribution exactly, so a Tracy–Widom floor calibrated for that ensemble would resolve nothing. It resolves this:
+A distribution-free control locates the behaviour. Permuting $J$'s entries destroys all rank structure while preserving the entry distribution exactly, so a Tracy–Widom floor calibrated for that ensemble would resolve nothing. It resolves this (a shuffle is a draw, so its column is the range over shuffle seeds 0–9; `exp57_permutation_control.py`):
 
 | gpt2 layer | excess kurtosis | $K$ real | $K$ shuffled | $K$ Gaussian |
 |---|---|---|---|---|
-| 0 | 81 | 71 | 8 | 0 |
-| 5 | 709 | 41 | 18 | 0 |
-| 10 | $7.4\times10^{4}$ | 6 | **43** | 0 |
+| 0 | 81 | 71 | 7–8 | 0 |
+| 5 | 708 | 41 | 15–21 | 0 |
+| 10 | $7.4\times10^{4}$ | 6 | **40–47** | 0 |
 
 At layer 10 the real transport resolves *fewer* modes than its own entry-shuffled version. The floor is calibrated for a Gaussian ensemble and a real transport is not one: the largest entry is $455\times$ the rms.
 
@@ -573,16 +573,16 @@ The tails are a handful of coordinates. gpt2 layers 5 and 10 both attain their m
 
 So an entry shuffle answers a different question: it spreads those coordinates uniformly and gives the control a bulk the transport itself does not have. §3.1 gives the reason a threshold has little to do here at all.
 
-**The inversion is mostly the identity.** Heavy tails are part of it, and the identity is the larger part. A permutation moves the diagonal off the diagonal, so it also destroys the identity component §1.1 establishes is there — on the control side only, while the real side keeps it holding its own floor up. Reading both sides on $J-\alpha I$ separates the two explanations:
+**The inversion is mostly the identity.** Heavy tails are part of it, and the identity is the larger part. A permutation moves the diagonal off the diagonal, so it also destroys the identity component §1.1 establishes is there — on the control side only, while the real side keeps it holding its own floor up. Reading both sides on $J-\alpha I$ — the residual and an entry shuffle of that same residual, shuffle columns over seeds 0–9 — separates the two explanations:
 
 | gpt2 layer | $K(J)$ | $K(\text{shuf } J)$ | $K(J-\alpha I)$ | $K(\text{shuf } J-\alpha I)$ |
 |---|---|---|---|---|
-| 7 | 24 | 25 | 48 | 13 |
-| 8 | 12 | 28 | 53 | 15 |
-| 9 | 6 | 34 | 46 | 21 |
-| 10 | 6 | 43 | 39 | 44–51 |
+| 7 | 24 | 24–29 | 48 | 11–13 |
+| 8 | 12 | 28–34 | 53 | 14–16 |
+| 9 | 6 | 33–39 | 46 | 20–24 |
+| 10 | 6 | 40–47 | 39 | 44–53 |
 
-The inversion appears at **four** consecutive layers on $J$, not one, and after the decomposition it is gone at 7–9 and emphatic in the expected direction — layer 9 moves from 6-against-34 to 46-against-21, with the shuffle stable at 20–24 over 8 seeds.
+The inversion appears at four consecutive layers on $J$, not one (at layer 7 the shuffle reaches the real count on every seed and exceeds it on nine of ten), and after the decomposition it is gone at 7–9 and emphatic in the expected direction — layer 9 moves from 6-against-33–39 to 46-against-20–24.
 
 Layer 10 survives, and there the original explanation is closer: $\mathrm{PR}(J-\alpha I)=1.5$, so the transport is nearly rank-one and a single dominant direction concentrates energy exactly as an identity does. Both are one mechanism — **the `mp` floor estimates its per-cell variance from the matrix it is judging, so anything that concentrates energy raises the bar that same matrix must then clear.** A control that removes structure can therefore read higher than the real thing, and that is the floor moving rather than evidence about the transport. The rule that follows is that a null must preserve what the architecture guarantees, and an entry shuffle does not preserve a residual stream's identity.
 
@@ -682,130 +682,131 @@ The two nulls move in opposite directions on a real transport: `mp` counts high 
 
 ## 6. What stands outside J-space
 
-### 6.1 gemma-3-1b, where the transport overlaps the stream's resolved set
+### 6.1 What the read removes beyond a transport drawn independently of the stream
 
-gemma-3-1b is the first of three models measured where the complement falls substantially below the stream's full resolved set (sec 6.2 has the other two). In its early layers the transport's directions lie *inside* that set:
+The complement read counts the stream's resolved modes, projects out the transport's row space and
+counts again. Per layer, $\Delta K = K(\text{stream}) - K(\text{complement})$ is positive where the
+removal costs the stream resolved modes and negative where projecting it out unmasks others; it is
+not a partition (sec 6.5). Nor is it an overlap on its own: the second count re-reads the frame
+from scratch, its per-channel whitening varies under projection, and at a width in the thousands
+two unaligned low-dimensional subspaces are near-orthogonal by default.
 
-| layer | K(stream) | K(complement) | removed | carried directions | outside% | J-space energy |
-|---|---|---|---|---|---|---|
-| 0 | 26.1 | 16.2 | **9.9 $\pm$ 5.7** | **12.0** | 62.2% | 0.04% |
-| 1 | 25.1 | 18.6 | 6.5 $\pm$ 1.9 | 9.0 | 74.1% | 0.04% |
-| 3 | 22.4 | 19.0 | 3.4 $\pm$ 1.1 | 5.0 | 84.9% | 0.01% |
-| 9 | 22.1 | 21.2 | 0.9 $\pm$ 0.8 | 16.8 | 96.0% | 0.02% |
+So every run is repeated with a matched-spectrum surrogate: the transport's own singular values on
+Haar-random left and right frames, with its exact pseudo-inverse
+(`exp4_stream_complement.py --surrogate SEED`). The surrogate's frames are drawn independently of
+the stream, so its overlap with the stream is the chance overlap at this width, and what its
+complement removes is what the read removes from the spectrum alone.
+A surrogate is a draw, and on the two models where the removal is largest it is drawn at three
+seeds. gemma-3-1b, at the layers all three seeds cover:
 
-8 wikitext-2 `test` sequences; the spread on *removed* is the standard deviation across them.
+| gemma-3-1b layer | K(stream) | K(complement) | removed | surrogate removed, seeds 0 / 1000 / 2000 | seed range | excess | carried directions | outside% | J-space energy |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | 23.4 | 13.1 | 10.2 $\pm$ 1.0 | 7.8 / 9.0 / 10.5 | 2.8 | $-0.2$ | 12.0 | 56.1% | 0.04% |
+| 2 | 21.9 | 10.9 | 11.0 $\pm$ 1.2 | 7.6 / 8.9 / 9.8 | 2.1 | $+1.2$ | 7.0 | 49.7% | 0.02% |
+| 4 | 20.6 | 5.4 | 15.2 $\pm$ 1.3 | 10.5 / 13.0 / 14.1 | 3.6 | $+1.1$ | 12.5 | 26.1% | 0.03% |
+| 6 | 19.4 | 6.8 | 12.6 $\pm$ 1.8 | 5.2 / 9.9 / 8.8 | 4.6 | $+2.8$ | 15.9 | 34.8% | 0.04% |
+| 9 | 21.5 | 8.2 | 13.2 $\pm$ 1.0 | 4.4 / 6.4 / 4.4 | 2.0 | $+6.9$ | 16.6 | 38.4% | 0.02% |
+| 11 | 20.1 | 8.1 | 12.0 $\pm$ 1.1 | 1.9 / 2.4 / 1.8 | 0.6 | $+9.6$ | 18.9 | 40.4% | 0.02% |
+| 13 | 19.9 | 11.6 | 8.2 $\pm$ 2.1 | 3.2 / 3.6 / 3.9 | 0.6 | $+4.4$ | 18.9 | 58.5% | 0.02% |
+| 16 | 20.2 | 17.0 | 3.2 $\pm$ 0.7 | 0.6 / 0.4 / 0.2 | 0.4 | $+2.6$ | 18.4 | 84.0% | 0.01% |
 
+8 wikitext-2 `test` sequences of 128 tokens, transport truncated at the participation ratio of
+$J-\alpha I$. The spread on *removed* is the standard deviation across the eight prompts; *excess*
+is the real removal less the largest of the three surrogate removals, and *seed range* the largest
+less the smallest (`exp58_complement_surrogates.py`). An excess is read as the transport's where it
+is larger than both spreads: the spread between surrogate draws and the spread between prompts.
 
-At layer 0 the complement removes $9.9\pm5.7$ modes against 12.0 directions carried: the count
-removed is of the order of the transport's carried rank, agreeing to within a standard error.
+**At layer 0 the removal is the spectrum's.** The real transport removes 10.2 modes against 12.0
+carried, and the three surrogates remove 7.8 to 10.5. A removal of the order of the carried rank is
+what the read gives a transport with no relation to the stream, so at layer 0 the read measures
+the spectrum.
 
-**The agreement is at the precision of eight prompts.** The per-prompt removals are
-$11, 10, 16, 11, 8, 5, 18, 0$ -- a standard deviation of 5.7 over a range from none to eighteen --
-while the carried count is $12$ on every prompt of the first sample and $11$ on one prompt of the
-second. The carried count reads the transported frame $HJ^{\mathsf T}$, so it is stream-dependent
-too, and far steadier than a difference of two mode counts. Two disjoint samples of eight sequences,
-the first eight of the split and the next eight, give **9.9 and 9.8** against carried ranks of 12.0
-and 11.9: they agree with each other, and both sit below the carried rank. The relationship is an
-order-of-magnitude one and the sample supports it at that resolution.
+**At layers 9, 11, 13 and 16 the excess is the transport's.** There it is 2.6 to 9.6 modes,
+against a seed range of 0.4 to 2.0 and a per-prompt spread of 0.7 to 2.1; at layers 9 and 11 the
+surrogates remove 1.8 to 6.4 and the real transport 12.0 to 13.2. At layers 2 to 6 the real removal
+also exceeds every seed, by 1.1 to 2.8, but by less than the seeds differ among themselves, so there
+it is not separated from the spectrum's. The separated excess sits from mid-depth on, not at the
+start of the network.
 
-The size of the effect is what the section rests on. The ordering at layer 0 runs three ways: gemma removes
-of order ten, Qwen3.5-0.8B removes $3.38$ (per-prompt 3, 3, 3, 3, 4, 3, 5, 3 — a standard deviation
-of 0.7, tighter than gemma's), and gpt2, pythia-70m, Qwen3-1.7B and Qwen3.5-4B remove essentially
-nothing despite carrying 5 to 21 directions. The overlap decays with depth and is gone by layer 9, where gemma
-rejoins the pattern.
+**Qwen3-1.7B**, at the layers all three seeds cover:
 
-**A note on precision.** Every number here is a mean over prompts, and the spread behind them is
-uneven. `outside%` carries a per-prompt standard deviation of 2.6-4.0 points on the three models
-that sit near 100%, so eight prompts state it comfortably. gemma-3-1b is the noisiest model
-measured -- its `K(stream)` has a standard deviation of 7.45 about a mean of 26.1 -- and *removed*
-is a difference of two such counts, so it inherits more relative noise than either. Across all six
-models and every quantity reported, that difference is the only one whose spread rivals its value.
+| Qwen3-1.7B layer | K(stream) | K(complement) | removed | surrogate removed, seeds 0 / 1000 / 2000 | seed range | excess | carried directions | outside% | J-space energy |
+|---|---|---|---|---|---|---|---|---|---|
+| 2 | 11.8 | 1.6 | 10.1 $\pm$ 1.7 | 2.5 / 0.0 / 1.2 | 2.5 | $+7.6$ | 2.5 | 13.8% | 0.04% |
+| 3 | 14.6 | 1.8 | 12.9 $\pm$ 1.6 | 4.0 / 12.6 / 12.6 | 8.6 | $+0.2$ | 3.9 | 12.0% | 0.03% |
+| 4 | 14.2 | 2.4 | 11.9 $\pm$ 2.0 | 11.0 / 11.0 / 1.0 | 10.0 | $+0.9$ | 4.0 | 16.7% | 0.01% |
+| 5 | 16.2 | 3.8 | 12.5 $\pm$ 0.9 | 6.1 / 12.4 / 12.4 | 6.2 | $+0.1$ | 3.0 | 23.1% | 0.02% |
+| 6 | 17.0 | 5.2 | 11.8 $\pm$ 1.4 | 10.6 / 1.2 / 10.6 | 9.4 | $+1.1$ | 3.0 | 30.9% | 0.03% |
+| 8 | 18.2 | 7.8 | 10.5 $\pm$ 1.4 | 9.5 / 9.9 / 8.6 | 1.2 | $+0.6$ | 3.0 | 42.5% | 0.01% |
+| 9 | 18.5 | 9.8 | 8.8 $\pm$ 0.9 | 1.0 / 7.5 / 0.5 | 7.0 | $+1.2$ | 4.0 | 52.7% | 0.02% |
+| 10 | 18.4 | 11.5 | 6.9 $\pm$ 1.2 | 0.1 / 6.5 / 6.0 | 6.4 | $+0.4$ | 5.9 | 62.6% | 0.08% |
+| 12 | 18.8 | 13.9 | 4.9 $\pm$ 1.5 | 6.6 / 3.5 / 0.6 | 6.0 | $-1.8$ | 5.0 | 74.0% | 0.04% |
 
-**Consequence 6.1a.** This is the converse of sec 6.5 and completes it. There, a transport captured 12-42% of the stream's *energy* and none of its resolved structure. Here, gemma's transport captures 0.04% of the energy and 38% of the resolved structure. Energy share and structural overlap come apart in both directions, which is what a variance share cannot settle on its own.
+**On Qwen3-1.7B the surrogate's removal varies widely between seeds.** At layers 3 to 6 and 9 to
+12 the three seeds span 6.0 to 10.0 modes: at layer 4 they remove 11.0, 11.0 and 1.0, at layer 6
+10.6, 1.2 and 10.6. At layers 3 to 6 two of the three seeds give the same pair of counts on every
+one of the eight prompts, so the second count falls on a few discrete outcomes and the frame drawn
+decides which. From layer 3 to layer 10 the real removal sits at or just above the largest seed, by
+$+0.1$ to $+1.2$, less than the seeds differ among themselves, and at layer 12 below it. Only at
+layer 2 is the excess, $+7.6$, larger than both the seed range (2.5) and the per-prompt spread
+(1.7). On this model the removal is separated from the spectrum's at layer 2 alone.
+
+**Consequence 6.1a.** Energy share and structural overlap come apart. gemma's transport holds 0.01%
+to 0.04% of the stream's energy at these layers and removes up to 9.6 resolved modes beyond what its
+spectrum removes; in sec 6.5 a transport holding 12-42% of the energy leaves the stream's resolved
+count within two thirds of a mode of where it was. A variance share cannot settle the structural
+question in either direction.
 
 ### 6.2 Replication across six models
 
-Same protocol on pythia-70m-deduped (GPTNeoX, d=512, 5 fitted layers) and Qwen3.5-0.8B (d=1024, 23 fitted layers). Qwen3.5-0.8B carries both the interior $\mathrm{PR}(M)$ peak of sec 4.1, at relative depth 0.82, and an interior etendue peak, so it tests the read where workspace-like structure exists rather than only where it does not.
+Same protocol on all six models, with one surrogate seed beside each real run and three on the two
+models of sec 6.1:
 
-| | gpt2 (d=768) | pythia-70m (d=512) | Qwen3.5-0.8B (d=1024) |
-|---|---|---|---|
-| interior etendue band | no | no | **yes** |
-| K(stream) | 17.8-22.1 | 14.8-16.8 | 12.2-22.8 |
-| outside% | 97.7-100.0% | 98.4-101.6% | **85.2-141.8%** |
-| J-space energy share | 2.8-9.2% | 0.5-6.4% | 9.5-19.9% |
+| model | $d$ | prompts | mean K(stream) | outside% | J-space energy share | mean $\Delta K$ | mean $\lvert\Delta K\rvert$ | layers $+/-$ | surrogate mean $\Delta K$ | mean $\lvert$real $-$ surrogate$\rvert$ | interior etendue peak |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| pythia-70m | 512 | 8 | 14.4 | 97.5-101.7% | 0.5-6.4% | $+0.07$ | 0.17 | 3 / 1 | $+0.12$ | 0.15 | no |
+| gpt2 | 768 | 8 | 18.1 | 83.9-103.1% | 2.8-9.2% | $+0.65$ | 0.81 | 8 / 3 | $+0.09$ | 0.90 | no |
+| Qwen3.5-0.8B | 1024 | 8 | 17.2 | 84.5-142.1% | 9.5-19.9% | $+0.61$ | 2.23 | 16 / 7 | $+0.65$ | 0.23 | yes |
+| gemma-3-1b | 1152 | 8 | 20.4 | 26.1-100.6% | 0.0-0.2% | $+7.17$ | 7.20 | 21 / 3 | $+3.58$ | 3.65 | yes |
+| Qwen3-1.7B | 2048 | 8 | 20.4 | 12.0-102.1% | 0.0-1.1% | $+4.87$ | 4.94 | 22 / 3 | $+2.56$ | 2.49 | yes |
+| Qwen3.5-4B | 2560 | 6 | 20.9 | 77.6-167.7% | 0.7-14.6% | $-0.56$ | 3.73 | 16 / 13 | $-0.57$ | 0.20 | yes |
 
-All three rows at 8 wikitext-2 `test` sequences of 128 tokens, transport truncated at the
-participation ratio of $J-\alpha I$, with the truncation and its pseudo-inverse taken from one SVD
-as a matched pair (sec 6.5). Qwen3.5-0.8B's energy share reproduces to the digit under the matched
-pair; gpt2's and pythia's move, because their participation-ratio truncations are small enough to
-fall in the regime where a general pseudo-inverse fails.
+Every row is read over all fitted layers on wikitext-2 `test` sequences of 128 tokens, with the
+truncation at the participation-ratio rank and its pseudo-inverse taken from one SVD as a matched
+pair (sec 6.5); Qwen3.5-4B carries 6 prompts where the rest carry 8. The surrogate columns are seed
+0 on the same prompts. `exp58_complement_surrogates.py` prints the table from the result files.
 
-The complement result holds on gpt2 and pythia-70m, whose complements remove a signed mean of $+0.09$ and $0.00$ resolved modes per layer. On Qwen3.5-0.8B it removes $+0.74$, and the ratio spans 85.2% to 141.8%. The six-model extension below sets that beside the other transports.
+**On three of the six models the surrogate reproduces the read layer by layer.** On pythia-70m,
+Qwen3.5-0.8B and Qwen3.5-4B the real and surrogate removals differ by 0.15 to 0.23 modes on
+average. The two Qwen3.5 models remove through the first part of the network and
+unmask through the second, flipping sign at layer 15 and layer 18 (Qwen3.5-0.8B's layer 18 removes
+again, $+0.75$), and their surrogates do the same, layer 18 included.
+Those removals, those unmaskings and every outside% above 100% are properties of the transport's
+spectrum, not of its frame.
 
-Resolved dimension grows with width, sublinearly:
+**gpt2 departs from its surrogate by 0.90 on average**, most at layers 2 to 4, where the real
+transport removes 1.6 to 3.1 modes and the surrogate $-0.5$ to $0.8$. That is one seed, and sec 6.1
+shows surrogate removals differing between seeds by up to five modes on gemma-3-1b and ten on
+Qwen3-1.7B, so one seed does not place it.
 
-| model | $d$ | mean K(stream) | K/$d$ |
-|---|---|---|---|
-| pythia-70m | 512 | 15.7 | 0.031 |
-| gpt2 | 768 | 19.3 | 0.025 |
-| Qwen3.5-0.8B | 1024 | 18.7 | 0.018 |
-| Qwen3-1.7B | 2048 | 26.8 | 0.013 |
+**gemma-3-1b and Qwen3-1.7B carry the largest removals and the smallest energy shares.** Their
+seed-0 surrogates remove about half as much as the real transports on average. Sec 6.1 reads them
+at three seeds: gemma's excess is separated from the surrogate's at layers 9, 11, 13 and 16, and
+Qwen3-1.7B's at layer 2 alone. Six models are too few to say what separates the transports whose removal exceeds the
+spectrum's from those whose removal does not.
 
-The rank correlation with width is $+1.000$ over these four points and the log-log slope is $+0.351$ -- sublinear, nearer $\sqrt{d}$ than flat. A fourfold range of width gives a 1.7-fold change in resolved dimension. The 128-position ordered axis bounds the count at 128 and none of these approaches it, so the growth is a property of the stream rather than of the window -- but it is growth, not invariance.
+Resolved dimension grows with width, sublinearly. Over the six models the rank correlation of mean
+K(stream) with width is $+0.943$ and the log-log slope is $+0.209$: a fivefold range of width gives
+a 1.45-fold change in resolved dimension. The 128-position ordered axis bounds the count at 128 and
+none of these approaches it, so the growth is a property of the stream rather than of the window --
+but it is growth, not invariance.
 
-**The band and the carrying capacity are different curves.** On Qwen3.5-0.8B the transport's own effective rank rises to its peak at layer 18, while the number of directions it actually resolves on a stream peaks early -- 21.8 at layer 2 -- and falls monotonically to 13.0 by layer 22. The etendue match traces its own arc, peaking at 0.545 around layer 6 on the four-sequence draw. Three quantities that might have been expected to move together do not, and with four prompts this is an observation rather than a result.
+The interior etendue peak sits at a different depth from the interior peak of the transport's own
+effective rank (sec 4.1) on three of the four banded models -- Qwen3.5-0.8B 6 against 18, Qwen3-1.7B
+4 against 19, gemma-3-1b 8 against 13 -- and on the same layer, 26, on Qwen3.5-4B. One coincidence
+in four is not an alignment.
 
-**Extended to six models.** Qwen3.5-4B (d=2560, 31 fitted layers) was read with its forward passes on a GPU and its spectral reads locally, the two halves verified identical on a smaller model first:
-
-| model | $d$ | prompts | outside% | J-space energy share | interior etendue peak |
-|---|---|---|---|---|---|
-| pythia-70m | 512 | 8 | 98.4-101.6% | 0.5-6.4% | no |
-| gpt2 | 768 | 8 | 97.7-100.0% | 2.8-9.2% | no |
-| Qwen3.5-0.8B | 1024 | 8 | **85.2-141.8%** | 9.5-19.9% | yes |
-| gemma-3-1b | 1152 | 8 | 62.2-101.7% | 0.0-0.2% | yes |
-| Qwen3-1.7B | 2048 | 8 | 99.1-100.9% | 0.0-1.1% | yes |
-| **Qwen3.5-4B** | **2560** | **6** | **78.8-162.1%** | **0.7-14.6%** | **yes** |
-
-Every row is computed with the truncation and its pseudo-inverse taken from one SVD (sec 6.5), at
-the participation-ratio rank, on wikitext-2 `test` sequences of 128 tokens. Qwen3.5-4B carries 6 prompts where the rest carry 8.
-
-**Three of the six transports reach into the stream's resolved set, and the energy share does not
-say which.** Per layer, $\Delta K = K(\text{stream}) - K(\text{complement})$ is positive where the
-transport's removal costs the stream resolved modes and negative where projecting it out unmasks
-others — sec 6.5 notes that this is not a partition. Both the signed mean and the mean magnitude
-are given, because they answer different questions:
-
-| model | J-space share | mean $\Delta K$ | mean $\lvert\Delta K\rvert$ | layers $+/-$ | outside% |
-|---|---|---|---|---|---|
-| pythia-70m | 6.4% | 0.00 | 0.15 | 2 / 2 | 98.4-101.6% |
-| Qwen3-1.7B | 1.1% | +0.02 | 0.08 | 10 / 5 | 99.1-100.9% |
-| gpt2 | 9.2% | +0.09 | 0.09 | 4 / 0 | 97.7-100.0% |
-| Qwen3.5-0.8B | 19.9% | +0.74 | 2.42 | 15 / 8 | 85.2-141.8% |
-| gemma-3-1b | **0.2%** | **+1.75** | 1.84 | 17 / 5 | 62.2-101.7% |
-| Qwen3.5-4B | 14.6% | **-0.57** | 3.88 | 16 / 15 | 78.8-162.1% |
-
-**gemma-3-1b carries the lowest energy share in the table and the largest signed removal**, while
-gpt2 at forty-six times its share removes 0.09. That crossing is the result, and it holds under either
-statistic: Consequence 6.1a measured across six models rather than argued from two. A rank
-correlation between share and removal is not reported, because it runs $+0.543$ against the
-magnitude and $-0.257$ against the signed mean and so carries nothing.
-
-The two Qwen3.5 models behave the same way as each other and differently from gemma: they remove
-through the first half of the network and unmask through the second, flipping sign at layer 15 and
-layer 18. On Qwen3.5-0.8B that is the identity-jump layer sec 6.3 singles out. Two draws of 8 and
-12 prompts give 85.2-141.8% and 85.3-146.5%.
-
-The complement result holds on three of the six models — pythia-70m, gpt2 and Qwen3-1.7B — where
-the transport's removal leaves the stream's resolved set intact to within a tenth of a mode on
-the signed mean. On the other three it does not: gemma-3-1b throughout its early layers, and the
-two Qwen3.5 models in the first half of the network. **What separates the two groups is not the
-energy share**, which spans 1.1% to 9.2% among the three where the result holds and 0.2% to 19.9%
-among the three where it does not, nor the presence of the interior band of sec 4.1, which five of
-the six carry. Six models is too few to identify what does.
-
-In Qwen3.5-4B the etendue peak (layer 26) falls exactly on the peak of the transport's own effective rank (layer 26). That happens in one of the four banded models -- Qwen3.5-0.8B is 18 against 6, Qwen3-1.7B 19 against 4, gemma-3-1b 13 against 8 -- so the alignment is coincidental.
-
-**Insensitive to the layer pairing.** For pythia the alignment statistics cannot separate offset 0 from offset +1 -- top-1 agreement is 0.176 against 0.168, because the model is too weak for confident-position agreement to discriminate (cosine again prefers the degenerate +2, which top-1 rejects at 0.00). It does not matter: run at offset 0 the same reads give outside% of 98.0-102.2% against 97.9-102.2% at offset +1. On Qwen3.5-0.8B the statistics do separate them, and they corroborate the documented pairing (top-1 0.81 at +1 against 0.76 and 0.42).
+**Insensitive to the layer pairing.** For pythia the alignment statistics cannot separate offset 0 from offset +1 -- top-1 agreement is 0.176 against 0.168, because the model is too weak for confident-position agreement to discriminate (cosine again prefers the degenerate +2, which top-1 rejects at 0.00). It does not matter: run at offset 0 the same reads give outside% of 98.3-101.7% against 97.5-101.7% at offset +1. On Qwen3.5-0.8B the statistics do separate them, and they corroborate the documented pairing (top-1 0.81 at +1 against 0.76 and 0.42).
 
 ### 6.3 An etendue band on real streams
 
@@ -817,7 +818,7 @@ On Qwen3.5-0.8B the etendue match -- the ratio of the two sides' phase space, an
 
 It peaks at **0.524 at layer 6** on the twelve-sequence draw, holds a plateau through layer 14, then falls **0.393 to 0.236 in a single step at layer 15** -- the largest single-layer drop in the profile by a factor of two over the next -- and declines to 0.080 at the last layer. A middle band with collapse at both ends, on real streams, from an invariant with no threshold in it.
 
-**Reproducible across prompt samples.** Two independent draws (4 and 12 wikitext sequences) give the same etendue profile: $r=0.9993$ on the etendue match with a mean absolute difference of 0.0097, and $r=0.9935$ on the carried-direction count. What those two draws establish is the etendue profile; the complement on this model is in sec 6.2, where two draws of 8 and 12 prompts give 85.2-141.8% and 85.3-146.5%.
+**Reproducible across prompt samples.** Two draws of 8 and 12 wikitext sequences give the same etendue profile: $r=0.9998$ on the etendue match with a mean absolute difference of 0.0025, and $r=0.9985$ on the carried-direction count. The twelve include the eight, so this is agreement under a larger sample rather than between disjoint ones. The complement on this model is in sec 6.2, where the same two draws give 84.5-142.1% and 84.9-144.9%.
 
 The layer-15 step is visible in the transport alone: identity energy jumps $+0.152$ there against a next-largest single-layer change of $+0.075$ in that model. These are not independent witnesses -- more identity leaves less non-identity structure to carry, so the etendue drop is downstream of the identity jump. What the two together establish is that the transition is sharp and localized rather than gradual.
 
@@ -835,9 +836,9 @@ The layer-15 step is visible in the transport alone: identity energy jumps $+0.1
 
 pythia-70m, whose transport shows no interior peak, has a strictly monotone etendue profile, and the three models with an interior peak in $\mathrm{PR}(M)$ also show an interior etendue peak. gpt2 has an interior peak in $\mathrm{PR}(M)$ at relative depth 0.20 and a monotone etendue profile, so the association holds on four of the five and gpt2 is the exception to it. Both Qwen models are banded and both non-banded models are non-Qwen, so family and bandedness were perfectly confounded until gemma-3-1b -- banded and not Qwen -- separated them. The association is with the transport's rank, across three families.
 
-The peak's *height* is another matter: qwen3-1.7b reaches only 0.065 against Qwen3.5-0.8B's 0.524, a ratio of nearly eight, and its peak/first ratio of 18.1 comes off a base of 0.0036. A large ratio on a negligible base is not a large band.
+The peak's *height* is another matter: qwen3-1.7b reaches only 0.065 against Qwen3.5-0.8B's 0.524, a ratio of about eight, and its peak/first ratio of 18.1 comes off a base of 0.0036. A large ratio on a negligible base is not a large band.
 
-**Three bands, three positions.** The transport's own effective rank peaks at layer 18 (sec 4.1), the etendue match at layer 6, and the count of directions actually carried declines monotonically from layer 2. Three depth profiles of the same transport, three different shapes. Whatever the interior band in $\mathrm{PR}(M)$ is, it is not carrying capacity on streams.
+**Three bands, three positions.** The transport's own effective rank peaks at layer 18 (sec 4.1), the etendue match at layer 6, and the count of directions actually carried peaks at layers 2-4 and declines from there. Three depth profiles of the same transport, three different shapes. Whatever the interior band in $\mathrm{PR}(M)$ is, it is not carrying capacity on streams.
 
 ### 6.4 The share of stream energy inside J-space
 
@@ -873,12 +874,12 @@ architectures at different widths.
 ### 6.5 The transport captures energy
 
 The two quantities come apart, and this is the sharpest form of the result. At pythia rank 200
-J-space holds **12-42% of stream energy** -- and the complement still keeps **99-102%** of the
-stream's resolved modes. Raising the rank raises the captured energy monotonically and leaves the
-captured *structure* at essentially zero.
+J-space holds **12-42% of stream energy** -- and the complement still keeps **97.5-102.6%** of the
+stream's resolved modes. Raising the rank from 50 to 200 raises the captured energy monotonically
+and leaves the captured *structure* within two thirds of a mode of zero at every layer.
 
 The mechanism is the transported frame's own dimensionality: it resolves 1-8 directions at
-pythia and 6-21 at gpt2, and those counts barely move with rank. The transport's energy is
+pythia and 3-21 at gpt2 across the swept ranks, and those counts barely move with rank. The transport's energy is
 concentrated in a few dominant directions -- the massive-activation coordinates the same
 transports carry as their heaviest entries (sec 3.3) -- while the stream's resolved-mode structure
 lies elsewhere.
@@ -917,17 +918,17 @@ $1.00000$ at every layer.
 
 ### 6.6 The etendue ceiling
 
-`Screen.transfer` settles a crossing by comparing the two sides' etendue, which bounds how many directions the receiving side's phase space can carry -- a ceiling, independent of how many are observed occupied. On gpt2:
+`Screen.transfer` settles a crossing by comparing the two sides' etendue, which bounds how many directions the receiving side's phase space can carry -- a ceiling, independent of how many are observed occupied. On gpt2, from the eight-sequence run of sec 6.2:
 
 | layer | modes_to | etendue match | tau |
 |---|---|---|---|
-| 0 | 19.0 | 0.170 | 0.170 |
-| 5 | 7.3 | 0.005 | 0.005 |
-| 10 | 2.0 | 0.001 | 0.001 |
+| 0 | 19.3 | 0.158 | 0.158 |
+| 5 | 5.5 | 0.0043 | 0.0043 |
+| 10 | 2.0 | 0.0006 | 0.0006 |
 
-The match is the ratio of the two etendues, and it collapses across depth: the transport's phase space is 17% of the stream's at layer 0 and 0.1% by layer 10. `tau` -- the fraction of the sender's energy that fits the receiver's etendue -- follows it exactly.
+The match is the ratio of the two etendues, and it collapses across depth: the transport's phase space is 16% of the stream's at layer 0 and 0.06% by layer 10. `tau` -- the fraction of the sender's energy that fits the receiver's etendue -- follows it exactly.
 
-**Consequence 6.6a.** The transport is etendue-limited, and the limit is not a property of what the stream happens to contain. `modes_to` reproduces the transported frame's resolved direction count (19.0, 7.3, 2.0 against 19.0, 7.3, 2.0), so the low dimensionality of sec 6.5 is not an accident of these prompts: it is the phase space the conversion has. A transport whose etendue admits two directions cannot carry twenty, whatever is presented to it.
+**Consequence 6.6a.** The transport is etendue-limited, and the limit is not a property of what the stream happens to contain. `modes_to` reproduces the transported frame's resolved direction count (19.3, 5.5, 2.0 against 19.3, 5.5, 2.0), so the low dimensionality of sec 6.5 is not an accident of these prompts: it is the phase space the conversion has. A transport whose etendue admits two directions cannot carry twenty, whatever is presented to it.
 
 `Screen.realise` separates the conversion's own loss from that phase-space bound; it is reported by `exp4` under `--realise`.
 
@@ -1090,7 +1091,7 @@ What this is: a measurement instrument for characterising linear readouts, with 
 
 Ten models are profiled in sec 4.1, none above 8B, and the scale trend is an observation over ten points in which width, depth, family and generation all covary. It identifies no driver. The catalogue holds lenses up to Llama-3.3-70B, and the subject of [Anthropic 2026] is a ~100-layer model, larger than anything read here.
 
-Section 6 rests on six models at four to twelve prompts of 128 tokens each. The complement result is stable on three of them across transport ranks from 5 to full and across the layer pairing. The three exceptions are gemma-3-1b and the two Qwen3.5 models, and the energy share does not separate them from the rest (sec 6.2). The sample of *prompts* is small, and every number is a mean over it: on Qwen3.5-0.8B two draws of 8 and 12 prompts agree at the bottom of the range (85.2% and 85.3%) and differ at the top (141.8% and 146.5%). The etendue band of sec 6.3 is measured on five models and three show it, reproducing across prompt samples to $r=0.9993$ on the one sampled twice. Three showing interior structure and two not is five observations, not a pattern.
+Section 6 rests on six models at six to twelve prompts of 128 tokens each, with the matched-spectrum surrogate drawn at one seed on four of them and at three on two. On pythia-70m and the two Qwen3.5 models the surrogate reproduces the complement read layer by layer, so there the read reports the spectrum. gemma-3-1b's removal is separated from three surrogate seeds at layers 9, 11, 13 and 16; Qwen3-1.7B's surrogate removal varies by up to ten modes between seeds, and three seeds separate only its layer 2; gpt2's departure from its surrogate rests on one seed (sec 6.1, 6.2). The sample of *prompts* is small, and every number is a mean over it: on Qwen3.5-0.8B draws of 8 and 12 prompts, the twelve including the eight, give 84.5-142.1% and 84.9-144.9%. The etendue band of sec 6.3 is measured on five models and three show it, reproducing across prompt samples to $r=0.9998$ on the one sampled twice. Three showing interior structure and two not is five observations, not a pattern.
 
 $\mathrm{PR}$ and $H_2$ are energy-weighted effective ranks. They carry no false-alarm level and therefore no decision, which is what makes them appropriate for a noise-free object and what stops them answering "how many directions are real" -- sec 3.2's principal angles answer that instead, and only out to the $k$ actually tested ($k=400$ of $d=2560$). The agreement does not degrade anywhere inside that range, so the reproducible dimension is bounded below by 400 and not bounded above by anything measured here.
 
@@ -1198,11 +1199,13 @@ are fetched with `entroptics-jlens fetch <model>`.
 | §1.7 what the modes name | `exp52_what_the_hidden_modes_name.py` | — |
 | §1.7 two-fit reproduction, blocks, nulls | `exp53_hidden_modes_reproduce.py` | `results/hidden_modes_reproduce.json` |
 | §3.1 estimator noise, §3.2 principal angles | `exp3_two_fit_noise.py` | `results/twofit.json` |
-| §3.3 shuffle controls | `exp1_transport_spectrum.py` | `results/exp1.json` |
+| §3.3 shuffle controls | `exp57_permutation_control.py` | `results/permutation_control.json` |
 | §4, §4.1 depth profiles | `exp2_depth_profile.py` | `results/depth.json` |
 | §6 complement and etendue, all six models | `exp4_stream_complement.py` | `results/complement_*.json` |
+| §6.2 layer pairing, pythia at offset 0 | `exp4_stream_complement.py --offset 0` | `results/complement_pythia70m_p8_off0.json` |
+| §6.1, §6.2 matched-spectrum surrogates | `exp4_stream_complement.py --surrogate SEED`, then `exp58_complement_surrogates.py` | `results/surrogate_*_s*.json` |
 | §7 linearisation reach | `exp18_prenorm_target.py` | `results/prenorm_target.json` |
-| §8 cross-model crossing | `exp26_cross_tokenizer.py` | `results/cross_tokenizer_control.json` |
+| §8 cross-model crossing | `exp26_cross_tokenizer.py` | `results/cross_tokenizer.json` |
 | §9 ranking resolution | `exp19_recalibrate.py` | `results/recalibrate.json` |
 
 `research/experiments/README.md` indexes every script with a one-line description. The test suite
@@ -1214,7 +1217,7 @@ pins the identities these reads rest on and needs no model or corpus.
 
 **[Anthropic 2026]** *Verbalizable Representations Form a Global Workspace in Language Models.* Transformer Circuits Thread, 2026. https://transformer-circuits.pub/2026/workspace/index.html. Code: https://github.com/anthropics/jacobian-lens (Apache 2.0). Lenses: https://huggingface.co/neuronpedia/jacobian-lens.
 
-**[Sessford 2026]** Sessford, I. J. *Entroptics: Reading any 2-D signal as a finite optical aperture at its own entropy-matched resolution.* Pre-print, July 2026. https://doi.org/10.5281/zenodo.21273400. Software: https://pypi.org/project/entroptics/ (`pip install entroptics`; this work uses 0.2.1). Source: https://github.com/Agience/entroptics (Apache-2.0).
+**[Sessford 2026]** Sessford, I. J. *Entroptics: Reading any 2-D signal as a finite optical aperture at its own entropy-matched resolution.* Pre-print, July 2026. https://doi.org/10.5281/zenodo.21273400. Software: https://pypi.org/project/entroptics/ (`pip install entroptics`; this work uses 0.2.10). Source: https://github.com/Agience/entroptics (Apache-2.0).
 
 **[Ansuini et al. 2019]** Ansuini, A., Laio, A., Macke, J. H., Zoccolan, D. *Intrinsic dimension of data representations in deep neural networks.* NeurIPS 2019.
 

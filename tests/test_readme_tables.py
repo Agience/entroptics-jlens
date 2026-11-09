@@ -96,23 +96,34 @@ def test_the_shuffle_inversion_table_is_what_the_lens_gives():
     text = README.read_text(encoding="utf-8")
     block = re.search(r"\| layer \| K\(J\) \| K\(shuffled J\).*?\n\n", text, re.DOTALL)
     assert block, "the shuffle table is no longer in the README in the shape this test reads"
-    rows = re.findall(r"^\| (\d+) \| (\d+) \| (\d+) \| \| (\d+) \| ([\d–\-]+) \|$",
+    span = r"(\d+)(?:–(\d+))?"
+    rows = re.findall(rf"^\| (\d+) \| (\d+) \| {span} \| \| (\d+) \| {span} \|$",
                       block.group(0), re.MULTILINE)
     assert len(rows) == 4, f"parsed {len(rows)} shuffle rows, expected 4"
 
+    # A shuffle is a draw, so the shuffled columns are the range over seeds 0..9, drawn the way
+    # `exp57_permutation_control.py` draws them: exp1's order, a Gaussian null first, then the
+    # entry shuffle of J, then the entry shuffle of the residual.
     lens = je.load_lens(LENS)
-    for layer, k_j, k_shuf_j, k_m, _k_shuf_m in rows:
-        J = lens.jacobian(int(layer))
+    for layer, k_j, lo, hi, k_m, lo_m, hi_m in rows:
+        J = np.asarray(lens.jacobian(int(layer)), dtype=np.float64)
         M = je.decompose(J).residual
-        rng = np.random.default_rng(0)
         assert je.transport_spectrum(J, null="mp").K == int(k_j), f"K(J) at layer {layer}"
-        assert je.transport_spectrum(je.shuffled_entries(J, rng),
-                                     null="mp").K == int(k_shuf_j), f"K(shuf J) at {layer}"
         assert je.transport_spectrum(M, null="mp").K == int(k_m), f"K(J-aI) at layer {layer}"
+        shuf, shuf_m = [], []
+        for seed in range(10):
+            rng = np.random.default_rng(seed)
+            je.gaussian_null(J.shape, rng, sigma=je.frobenius_sigma(J))
+            shuf.append(je.transport_spectrum(je.shuffled_entries(J, rng), null="mp").K)
+            shuf_m.append(je.transport_spectrum(je.shuffled_entries(M, rng), null="mp").K)
+        assert (min(shuf), max(shuf)) == (int(lo), int(hi or lo)), f"K(shuf J) at {layer}"
+        assert (min(shuf_m), max(shuf_m)) == (int(lo_m), int(hi_m or lo_m)), \
+            f"K(shuf J-aI) at {layer}"
 
-    # And the claim the table is making, not just its cells.
-    inverted_raw = [r for r in rows if int(r[1]) < int(r[2])]
-    assert len(inverted_raw) == 4, "the README says all four rows invert on raw J"
+    # And the claim the table is making, not just its cells: on raw J no shuffle seed reads
+    # below the real transport, and on J - alpha*I every seed reads below it at 7-9.
+    assert all(int(r[2]) >= int(r[1]) for r in rows), "a shuffle reads below the real J"
+    assert all(int(r[6] or r[5]) < int(r[4]) for r in rows[:3]), "7-9 must not invert on J-aI"
 
 
 # ---------------------------------------------------------------- the Qwen tables

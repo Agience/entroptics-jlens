@@ -83,7 +83,7 @@ def main(argv=None) -> int:
         C = je.as_frame(F - mu)
         sv = np.linalg.svd(C, full_matrices=False, compute_uv=False)
         Vt = np.linalg.svd(C, full_matrices=False)[2]
-        K = max(1, int((sv > float(noise_floor(C, far=a.far, s=sv))).sum()))
+        K = max(1, int((sv > float(noise_floor(C, far=a.far, null=je.NULLS["mp"], s=sv))).sum()))
         e = np.cumsum(sv ** 2) / float((sv ** 2).sum())
         e99 = int(np.searchsorted(e, 0.99) + 1)
         d = F.shape[1]

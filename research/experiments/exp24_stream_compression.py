@@ -96,7 +96,7 @@ def main(argv=None) -> int:
             U, sv, Vt = np.linalg.svd(je.as_frame(Hn), full_matrices=False)
             floor = float(je.noise_floor_of(Hn, far=a.far)) if hasattr(je, "noise_floor_of") \
                 else float(__import__("entroptics.projection", fromlist=["noise_floor"])
-                           .noise_floor(je.as_frame(Hn), far=a.far, s=sv))
+                           .noise_floor(je.as_frame(Hn), far=a.far, null=je.NULLS["mp"], s=sv))
             K = max(1, int((sv > floor).sum()))
             e = np.cumsum(sv ** 2) / float((sv ** 2).sum())
             ranks = {"K": K, "e90": int(np.searchsorted(e, 0.90) + 1),

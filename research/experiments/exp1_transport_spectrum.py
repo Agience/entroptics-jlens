@@ -79,7 +79,7 @@ def read_layer(lens, layer: int, far: float, seed: int, control_seed: int | None
            "sigma_top": float(mp.singular[0]),
            "sigma_median": float(np.median(mp.singular)),
            # The number that says whether the edge's Gaussian null applies at all. Measured
-           # 81 / 709 / 7.4e4 at gpt2 layers 0/5/10 -- so on a real transport K must be read
+           # 81 / 708 / 7.4e4 at gpt2 layers 0/5/10 -- so on a real transport K must be read
            # against the shuffled baseline, never against 0.
            "excess_kurtosis": mp.excess_kurtosis,
            "K_mp_far_1e-3": mp.recount(1e-3), "K_mp_far_0.2": mp.recount(0.2)}

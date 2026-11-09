@@ -233,12 +233,13 @@ def calibration_report(J, *, far: float = 0.05, draws: int = 200, seed: int = 0)
     sv = np.linalg.svd(A, compute_uv=False)
     rng = np.random.default_rng(seed)
     out = {}
+    from .transport import NULLS
+
     for name in ("mp", "robust"):
-        f = float(noise_floor(A, far=far, null=getattr(null_providers, name), s=sv))
+        f = float(noise_floor(A, far=far, null=NULLS[name], s=sv))
         null_draw = SURROGATES["sign_flip"](A, rng)
         sv_null = np.linalg.svd(null_draw, compute_uv=False)
-        f_null = float(noise_floor(null_draw, far=far,
-                                   null=getattr(null_providers, name), s=sv_null))
+        f_null = float(noise_floor(null_draw, far=far, null=NULLS[name], s=sv_null))
         out[name] = {"floor": f, "K": int((sv > f).sum()),
                      "K_null": int((sv_null > f_null).sum()),
                      "floor_null": f_null, "sampled": False}

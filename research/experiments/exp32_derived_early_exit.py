@@ -130,7 +130,7 @@ def main(argv=None) -> int:
         for l in range(1, L):
             D = je.as_frame(H[l + 1] - H[l])
             sv = np.linalg.svd(D, full_matrices=False, compute_uv=False)
-            resolved.append(int((sv > float(noise_floor(D, far=a.far, s=sv))).sum()))
+            resolved.append(int((sv > float(noise_floor(D, far=a.far, null=je.NULLS["mp"], s=sv))).sum()))
         dead = np.array(resolved) == 0
         first_layer = int(np.argmax(dead) + 1) if dead.any() else L
         first = np.full(top.shape[1], first_layer)

@@ -286,22 +286,21 @@ def complement(ls: LayerScreen) -> Projection:
     outside what the receiver resolves, and ``K_signal`` counts the modes standing above the
     noise floor there.
 
-    **Read the scope before using this number.** On real transports it reports that 92-102% of a
-    residual stream's resolved structure lies outside the transport, stable across six models in
-    four families -- and a matched-spectrum surrogate and a random rank-K matrix return the same
-    ~100%. In 2560 dimensions two unaligned low-dimensional subspaces are near-orthogonal by
-    default, so that figure is the value of the null at this width and the stability across models
-    is the stability of the null (benchmark B3). Use ``coverage``, which measures the overlap
-    against that chance level, when the question is how much of a stream a readout reaches.
+    **Read the scope before using this number.** The count is not a measure of overlap on its
+    own. ``uncondensed`` re-reads the residual frame from scratch after removing the receiver's
+    directions, and that re-read whitens per channel; whitening varies under projection, so the
+    mode count falls by some other amount than the number of directions taken out, and it can
+    rise. Across six models in four families the share of resolved structure left outside the
+    transport ranges from 12% to 168% of the stream's count, and a matched-spectrum surrogate --
+    the same singular values on Haar-random frames -- reproduces that profile layer by layer on three of the six models: in 2560
+    dimensions two unaligned low-dimensional subspaces are near-orthogonal by default, so the
+    removal is largely a property of the spectrum rather than of the frame.
 
-    The mechanism is that ``uncondensed`` re-reads the residual frame from scratch after removing
-    the receiver's directions, and that re-read whitens per channel; whitening varies under
-    projection, so the mode count falls by some other amount than the number of directions taken
-    out.
-
-    What it can still do: fire on a LARGE overlap. gemma-3-1b's early layers read 59.7%, roughly
-    40 points below the null band, and there the complement removes exactly the number of
-    directions the transport carries. Trust it to detect a big overlap, never to quantify one.
+    What a transport adds is the excess over that surrogate, and the surrogate removal varies
+    between frame draws by several directions on some models. Read ``complement`` against
+    surrogates drawn at several seeds (``research/experiments/exp4_stream_complement.py
+    --surrogate``), and treat only an excess outside their spread as a statement about the
+    transport.
 
     **Use ``coverage`` instead**, which measures the same intent -- how much of the signal the
     readout spans -- as a subspace overlap with an analytic chance level.

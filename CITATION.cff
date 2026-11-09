@@ -15,8 +15,8 @@ license: Apache-2.0
 # at; each release also gets its own version DOI, and naming one here would go stale on the
 # next deposit.
 doi: "10.5281/zenodo.22293929"
-version: 0.1.3
-date-released: "2026-09-08"
+version: 0.1.4
+date-released: "2026-11-09"
 keywords:
   - interpretability
   - jacobian lens
@@ -35,7 +35,7 @@ references:
       - given-names: Ikailo John
         family-names: Sessford
         affiliation: Ikailo
-    version: 0.2.1
+    version: 0.2.10
     doi: "10.5281/zenodo.21273400"
     repository-code: "https://github.com/Agience/entroptics"
     license: Apache-2.0

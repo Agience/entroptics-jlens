@@ -20,6 +20,7 @@ results/*
 !results/complement_gemma31b_p8.json
 !results/complement_gpt2_p8.json
 !results/complement_pythia70m_p8.json
+!results/complement_pythia70m_p8_off0.json
 !results/complement_qwen0.8b_p12.json
 !results/complement_qwen0.8b_p8.json
 !results/complement_qwen1.7b_p8.json
@@ -67,6 +68,20 @@ results/*
 !results/variance_estimator.json
 !results/transport_specificity.json
 !results/twofit.json
+!results/permutation_control.json
+!results/streams_gpt2_ranks.json
+!results/streams_pythia_rank.json
+!results/streams_ranksweep.json
+!results/surrogate_gemma31b_s0.json
+!results/surrogate_gemma31b_s1000.json
+!results/surrogate_gemma31b_s2000.json
+!results/surrogate_gpt2_s0.json
+!results/surrogate_pythia70m_s0.json
+!results/surrogate_qwen0.8b_s0.json
+!results/surrogate_qwen1.7b_s0.json
+!results/surrogate_qwen1.7b_s1000.json
+!results/surrogate_qwen1.7b_s2000.json
+!results/surrogate_qwen35_4b_s0.json
 lenses/
 streams/
 # exp47's lemma map: 3.5 MB, regenerated deterministically from the tokenizer and

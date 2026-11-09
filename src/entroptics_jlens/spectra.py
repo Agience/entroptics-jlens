@@ -68,15 +68,44 @@ def principal_angles(A, B, k: int) -> np.ndarray:
     the spectrum they still agree on a subspace, which is what a scalar noise floor cannot say.
     Follows the stability construction of Scanu et al. (arXiv:2606.09964, eq. 6) with *fit* in
     place of noise level.
+
+    **A top-``k`` subspace exists only where the spectrum says which ``k`` directions are on top.**
+    Two cases leave it undefined, and both refuse rather than return a number:
+
+    * ``k`` past the matrix's numerical rank -- fewer than ``k`` singular values stand above
+      round-off, so the remaining "top" directions are a basis of the null space, which is any
+      basis at all;
+    * ``k`` inside a run of equal singular values -- ``s_k`` and ``s_(k+1)`` agree to round-off,
+      so any ``k``-dimensional slice of the run is as much the top ``k`` as any other.
+
+    In either case LAPACK returns one arbitrary choice, and the cosines change with the thread
+    count and the driver: a heavily quantized weight matrix, mostly zeros and a few repeated
+    levels, read 0.345 to 0.349 at one ``k`` across five thread counts and two drivers. Round-off is
+    ``eps * s_0 * sqrt(max(shape))``, the bound this package uses for the same question in
+    ``transport``.
     """
     k = int(k)
     if k < 1:
         raise ValueError(f"principal_angles: k must be >= 1; got {k}")
-    Va = np.linalg.svd(as_frame(A, name="A"), full_matrices=False)[2][:k].T
-    Vb = np.linalg.svd(as_frame(B, name="B"), full_matrices=False)[2][:k].T
-    if Va.shape[1] < k or Vb.shape[1] < k:
-        raise ValueError(f"principal_angles: k={k} exceeds the available rank "
-                         f"({Va.shape[1]}, {Vb.shape[1]})")
+    out = []
+    for name, M in (("A", A), ("B", B)):
+        F = as_frame(M, name=name)
+        _, s, Vt = np.linalg.svd(F, full_matrices=False)
+        if s.size < k:
+            raise ValueError(f"principal_angles: k={k} exceeds the available rank of {name} "
+                             f"({s.size})")
+        limit = float(np.finfo(np.float64).eps * s[0] * np.sqrt(max(F.shape)))
+        rank = int((s > limit).sum())
+        if rank < k:
+            raise ValueError(f"principal_angles: k={k} exceeds the numerical rank of {name} "
+                             f"({rank} singular values above round-off {limit:.3g}): its top-{k} "
+                             f"subspace is not defined")
+        if k < s.size and s[k - 1] - s[k] <= limit:
+            raise ValueError(f"principal_angles: k={k} splits a run of equal singular values of "
+                             f"{name} (s_{k} - s_{k + 1} = {s[k - 1] - s[k]:.3g}, round-off "
+                             f"{limit:.3g}): its top-{k} subspace is not defined")
+        out.append(Vt[:k].T)
+    Va, Vb = out
     return np.clip(np.linalg.svd(Va.T @ Vb, compute_uv=False), 0.0, 1.0)
 
 

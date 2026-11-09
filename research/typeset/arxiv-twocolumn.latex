@@ -1,0 +1,285 @@
+% arxiv-twocolumn.latex: the shared pandoc template for a two-column arXiv-style preprint.
+% Built by build_paper.py (pandoc, then tectonic or any XeLaTeX); arxiv-twocolumn.lua is its filter.
+% Engine: XeTeX (fontspec, unicode-math). Fonts: Latin Modern text and math, DejaVu Sans Mono for code;
+% a character the current font lacks falls back to Latin Modern Math, then to DejaVu Sans.
+\documentclass[10pt,letterpaper,twocolumn]{article}
+\usepackage[letterpaper,top=0.75in,bottom=0.9in,left=0.7in,right=0.7in,columnsep=0.25in]{geometry}
+\usepackage{amsmath}
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{lmroman10}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+\setsansfont{lmsans10}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-oblique,BoldItalicFont=*-boldoblique]
+\setmonofont{DejaVuSansMono}[Extension=.ttf,UprightFont=*,BoldFont=*-Bold,ItalicFont=*-Oblique,BoldItalicFont=*-BoldOblique,Scale=MatchLowercase]
+\setmathfont{latinmodern-math.otf}
+\newfontfamily\typesetfallbackmath{latinmodern-math.otf}
+\newfontfamily\typesetfallbacksans{DejaVuSans}[Extension=.ttf,UprightFont=*,BoldFont=*-Bold,ItalicFont=*-Oblique,BoldItalicFont=*-BoldOblique]
+% \typesetmap{"XXXX} (build_paper.py writes one for each character outside Latin-1 and Latin
+% Extended-A that the paper uses) makes the character active at the start of the document: in text it
+% comes from the current font when that has it, else from the first fallback that does; in math it
+% keeps whatever unicode-math gave it (a prime stays a prime).
+\makeatletter
+\protected\def\typesetglyph#1{%
+  \iffontchar\font#1\relax\char#1\relax
+  \else{\typesetfallbackmath\iffontchar\font#1\relax\char#1\relax\else\typesetfallbacksans\char#1\relax\fi}%
+  \fi}
+\def\typeset@math#1{%
+  \ifcsname typeset@m@#1\endcsname\csname typeset@m@#1\expandafter\endcsname\else\Uchar#1 \fi}
+\protected\def\typesetchar#1{\ifmmode\expandafter\typeset@math\else\expandafter\typesetglyph\fi{#1}}
+\def\typesetmap#1{%
+  \edef\typeset@n{\number#1}% outside \lowercase, which would lowercase the hex digits A-F
+  \begingroup\lccode`\~=\typeset@n\relax
+  \lowercase{\endgroup
+    \ifdefined~\expandafter\let\csname typeset@m@\typeset@n\endcsname~\fi
+    \edef~{\noexpand\typesetchar{\typeset@n}}}%
+  \catcode\typeset@n=13\relax}
+\makeatother
+% amssymb names that unicode-math spells differently.
+\AtBeginDocument{%
+  \providecommand{\square}{\mdlgwhtsquare}\providecommand{\Box}{\mdlgwhtsquare}%
+  \providecommand{\blacksquare}{\mdlgblksquare}\providecommand{\lozenge}{\mdlgwhtlozenge}%
+  \providecommand{\blacklozenge}{\mdlgblklozenge}}
+% Legacy two-letter font commands (\rm, \bf, \it, ...), in text and in math.
+\providecommand{\rm}{}\DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
+\providecommand{\bf}{}\DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
+\providecommand{\it}{}\DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
+\providecommand{\sf}{}\DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
+\providecommand{\tt}{}\DeclareOldFontCommand{\tt}{\normalfont\ttfamily}{\mathtt}
+\usepackage{microtype}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{xtab}
+\usepackage{cuted}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,skip=4pt}
+\captionsetup[table]{position=top}
+\usepackage{fvextra}
+\usepackage{xurl}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{footmisc}
+\usepackage{enumitem}
+\setlist{itemsep=1pt,topsep=3pt,parsep=0pt}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=MidnightBlue,citecolor=MidnightBlue,urlcolor=MidnightBlue,filecolor=MidnightBlue,
+  pdftitle={$title-meta$},pdfauthor={$author-name$},pdfcreator={pandoc + XeTeX},bookmarksnumbered=true}
+\pdfstringdefDisableCommands{\def\typesetchar#1{\Uchar#1 }}
+
+% Paragraphs: indented, no extra space, ragged bottom so columns do not stretch.
+\setlength{\parskip}{0pt}
+\raggedbottom
+\emergencystretch=1.5em
+\tolerance=1000
+\hbadness=10000
+\clubpenalty=10000
+\widowpenalty=10000
+
+% Section headings. Numbered only when the paper's own headings carry no numbers (build_paper.py decides).
+$if(numbersections)$
+\setcounter{secnumdepth}{3}
+$else$
+\setcounter{secnumdepth}{-\maxdimen}
+$endif$
+\titleformat*{\section}{\normalfont\large\bfseries\raggedright}
+\titleformat*{\subsection}{\normalfont\normalsize\bfseries\raggedright}
+\titleformat*{\subsubsection}{\normalfont\normalsize\bfseries\itshape\raggedright}
+\titleformat*{\paragraph}{\normalfont\normalsize\itshape}
+\titlespacing*{\section}{0pt}{2.0ex plus 1ex minus .2ex}{1.0ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.6ex plus 1ex minus .2ex}{0.6ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{1.4ex plus 1ex minus .2ex}{0.5ex plus .2ex}
+\titlespacing*{\paragraph}{0pt}{1.0ex plus .5ex}{0.6em}
+
+% Code: monospaced at the floor size, wrapped at the column edge and never scaled.
+\RecustomVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\footnotesize,breaklines=true,breakanywhere=true,breaksymbolleft={},
+  xleftmargin=0.5em,frame=leftline,framerule=0.4pt,rulecolor=\color{Gray},framesep=0.5em}
+
+% Tables: small type, tight columns. Long tables break across columns (xtabular); wide ones float full width.
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.1}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\Centering\arraybackslash}p{#1}}
+% Scaling has a floor: nothing is set smaller than \typesetfloor.
+% DERIVED: 8 pt is \footnotesize of this 10 pt class, the smallest running text the template sets
+% (tables, code), so a scaled display is never smaller than the smallest text already on the page.
+\newdimen\typesetfloor \typesetfloor=8pt
+\newsavebox{\typesetfitbox}
+\newif\iftypesetfitok
+\makeatletter
+% \typeset@try{width}{base size}: does \typesetfitbox fit in width, scaled no smaller than the floor?
+% Sets \iftypesetfitok, and logs the scale it would apply ("typeset-scale: <scale x 1000>").
+\def\typeset@try#1#2{%
+  \ifdim\wd\typesetfitbox>#1\relax
+    \edef\typeset@scale{\the\numexpr\number\dimexpr#1\relax*1000/\number\wd\typesetfitbox\relax}%
+    % the effective size, base size x scale, against the floor
+    \ifdim\dimexpr#2*\typeset@scale/1000\relax<\typesetfloor
+      \typesetfitokfalse
+    \else
+      \typesetfitoktrue\typeout{typeset-scale: \typeset@scale}%
+    \fi
+  \else
+    \typesetfitoktrue
+  \fi}
+% \typesetfit{width}{content}: the content at natural size, scaled down only when wider than width,
+% and never below the floor; content too wide even at the floor is set at the floor and overflows,
+% which the build reports ("typeset-overflow").
+\newcommand{\typesetfit}[2]{\sbox{\typesetfitbox}{#2}\typeset@place{#1}{\f@size pt}}
+\def\typeset@place#1#2{%
+  \typeset@try{#1}{#2}%
+  \iftypesetfitok
+    \ifdim\wd\typesetfitbox>#1\relax\resizebox{#1}{!}{\usebox{\typesetfitbox}}\else\usebox{\typesetfitbox}\fi
+  \else
+    \edef\typeset@floorscale{\the\numexpr\number\typesetfloor*1000/\number\dimexpr#2\relax\relax}%
+    \ifnum\typeset@floorscale<1000
+      \typeout{typeset-scale: \typeset@floorscale}%
+      \scalebox{\strip@pt\dimexpr\typeset@floorscale pt/1000\relax}{\usebox{\typesetfitbox}}%
+    \else
+      \usebox{\typesetfitbox}%
+    \fi
+    \typeout{typeset-overflow: \the\wd\typesetfitbox\space into \the\dimexpr#1\relax}%
+  \fi}
+% \typesetdisplay{math}{split}: a display equation, and the same equation broken into lines at its
+% top-level \qquad separators (empty when it has none). The first of these that fits, never below the
+% floor, is used: the equation in the column; the split form in the column; the equation across both
+% columns (a strip at this point of the text); the split form across both columns.
+\def\typeset@show{%
+  \[\ifdim\wd\typesetfitbox>\linewidth\resizebox{\linewidth}{!}{\usebox{\typesetfitbox}}\else\usebox{\typesetfitbox}\fi\]}
+\def\typeset@strip{%
+  \typeout{typeset-strip: display}%
+  \par\begin{strip}\vspace{-\abovedisplayskip}\[\typeset@place{\textwidth}{\f@size pt}\]\vspace{-\belowdisplayskip}\end{strip}%
+  \noindent\ignorespaces}
+\long\def\typesetdisplay#1#2{%
+  \sbox{\typesetfitbox}{\(\displaystyle #1\)}%
+  \typeset@try{\linewidth}{\f@size pt}%
+  \iftypesetfitok\typeset@show\else
+    \long\def\typeset@alt{#2}%
+    \ifx\typeset@alt\@empty\typeset@strip\else
+      \sbox{\typesetfitbox}{\(\displaystyle #2\)}%
+      \typeset@try{\linewidth}{\f@size pt}%
+      \iftypesetfitok\typeset@show\else
+        \sbox{\typesetfitbox}{\(\displaystyle #1\)}%
+        \typeset@try{\textwidth}{\f@size pt}%
+        \iftypesetfitok\else\sbox{\typesetfitbox}{\(\displaystyle #2\)}\fi
+        \typeset@strip
+      \fi
+    \fi
+  \fi}
+% \typesetcolumntable{tabular}: an in-column table at natural size, in the column if it fits there
+% (tables are already at the floor size, so they are never scaled), otherwise across both columns.
+\long\def\typesetcolumntable#1{%
+  \sbox{\typesetfitbox}{\footnotesize #1}%
+  \ifdim\wd\typesetfitbox>\linewidth
+    \typeout{typeset-strip: table}%
+    \begin{strip}\centering\typeset@place{\textwidth}{\typesetfloor}\par\end{strip}%
+  \else
+    \begin{center}\usebox{\typesetfitbox}\end{center}%
+  \fi}
+\makeatother
+
+% For the build's report: how full each column is when it is made ("typeset-column: page columns
+% text floats height", lengths in sp). Float-only pages are made elsewhere and are not logged.
+\usepackage{etoolbox}
+\makeatletter
+\def\typeset@colfill{%
+  \setbox\z@\vbox{\unvcopy\@cclv}%
+  \typeout{typeset-column: \number\c@page\space\if@twocolumn 2\else 1\fi\space
+    \number\dimexpr\ht\z@+\dp\z@+\ht\footins+\dp\footins\relax\space
+    \number\dimexpr\textheight-\@colroom\relax\space\number\textheight}}
+\pretocmd{\@makecol}{\typeset@colfill}{}{\typeout{typeset-column: unavailable}}
+% A heading above the paper's section level (a part of the paper) is set as a centred divider.
+\newcounter{typesetpart}
+\newcommand{\typesetpart}[2]{\par\vspace{2.5ex plus 1ex}\stepcounter{typesetpart}%
+  \pdfbookmark[0]{#2}{typesetpart.\arabic{typesetpart}}%
+  {\centering\large\bfseries #1\par}\vspace{1.5ex plus .5ex}}
+\makeatother
+
+% Floats: allow full-width floats to take most of a page, and many to queue.
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\dbltopfraction}{0.9}
+\renewcommand{\dblfloatpagefraction}{0.75}
+\setcounter{topnumber}{3}
+\setcounter{dbltopnumber}{3}
+\setcounter{totalnumber}{5}
+\extrafloats{200}
+\setkeys{Gin}{width=\linewidth,height=0.8\textheight,keepaspectratio}
+
+% Pandoc helpers.
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\pandocbounded}[1]{#1}
+\newcommand{\passthrough}[1]{#1}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\small\thepage}
+\fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\fancyfoot[C]{\small\thepage}}
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+\begin{document}
+
+% Title block across both columns, with the abstract under it when the two leave room for the body to
+% start on page 1; otherwise the abstract opens the two-column body, so no page is left near-empty.
+\makeatletter
+\newsavebox{\typesettitle}
+\newsavebox{\typesetfront}
+\setbox\typesettitle=\vbox{%
+  \hsize=\textwidth \linewidth=\textwidth \columnwidth=\textwidth
+  \begingroup\centering
+  {\LARGE\bfseries $title$\par}
+$if(subtitle)$
+  \vspace{0.8ex}{\large $subtitle$\par}
+$endif$
+  \vspace{1.8ex}
+  {\normalsize $author-name$\par}
+  \vspace{0.3ex}
+  {\small\itshape $author-affiliation$\par}
+  {\small \href{mailto:$author-email$}{\texttt{$author-email$}}$if(orcid)$\quad ORCID \href{https://orcid.org/$orcid$}{$orcid$}$endif$\par}
+$if(date)$
+  \vspace{0.6ex}{\small $date$\par}
+$endif$
+  \endgroup
+}
+\long\def\typesetrule{\vspace{1.6ex}\noindent\rule{\linewidth}{0.4pt}\par\vspace{1.5ex}}
+$if(abstract)$
+\long\def\typesetabstract{%
+$abstract$
+}
+\setbox\typesetfront=\vbox{%
+  \hsize=\textwidth \linewidth=\textwidth \columnwidth=\textwidth
+  \unvcopy\typesettitle
+  \vspace{2ex}
+  {\centering\small\bfseries Abstract\par}
+  \vspace{0.6ex}
+  \begin{list}{}{\setlength{\leftmargin}{0.06\textwidth}\setlength{\rightmargin}{0.06\textwidth}%
+    \setlength{\listparindent}{1.2em}\setlength{\itemindent}{0pt}\setlength{\parsep}{0.5ex}\setlength{\topsep}{0pt}}
+  \small\item\relax\typesetabstract
+  \end{list}
+  \typesetrule
+}
+% CHOSEN: the title block and abstract go across both columns only if they leave ten lines of each
+% column for the body on page 1. Ten lines is about a sixth of the page: enough that page 1 reads as
+% the start of the paper, small enough that only a long abstract moves into the columns.
+\ifdim\dimexpr\ht\typesetfront+\dp\typesetfront+10\baselineskip\relax<\textheight
+  \twocolumn[\unvbox\typesetfront]
+\else
+  \twocolumn[\unvbox\typesettitle\typesetrule]
+  {\centering\small\bfseries Abstract\par}\vspace{0.6ex}
+  {\small\setlength{\parskip}{0.5ex}\noindent\typesetabstract\par}
+  \typesetrule
+\fi
+$else$
+\twocolumn[\unvbox\typesettitle\typesetrule]
+$endif$
+\makeatother
+
+$body$
+
+\end{document}

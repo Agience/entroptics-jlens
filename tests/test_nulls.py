@@ -200,12 +200,11 @@ def test_calibration_report_scores_the_null_against_the_nulls_own_floor():
         "this test cannot tell which floor K_null was counted against")
 
     # And the reported K_null is the one taken against the null's own floor.
-    from entroptics import null_providers
     from entroptics.projection import noise_floor
     draw = je.sign_flip(je.as_frame(A), np.random.default_rng(0))
     sv_null = np.linalg.svd(draw, compute_uv=False)
     for name in ("mp", "robust"):
-        own = float(noise_floor(draw, far=0.05, null=getattr(null_providers, name), s=sv_null))
+        own = float(noise_floor(draw, far=0.05, null=je.NULLS[name], s=sv_null))
         assert rep[name]["K_null"] == int((sv_null > own).sum()), name
 
 

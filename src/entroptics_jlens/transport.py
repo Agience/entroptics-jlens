@@ -37,8 +37,12 @@ front door for a residual stream but not for ``J``.
 
 Which null, and why the choice carries the result
 --------------------------------------
-``K = #(s_k > floor)`` and the floor comes from a null provider.  The default ``mp`` provider
-estimates its per-cell variance from the whole matrix -- signal included -- so a matrix carrying
+``K = #(s_k > floor)`` and the floor comes from a null provider.  The default ``mp`` is the
+library's ``null_providers.mp_median``: the Johnstone / Tracy-Widom edge with its per-cell variance
+read from the median row energy of the matrix as it stands.  (The library's own ``mp`` reads the
+mean cell energy, which is exact for the whitened screens ``Projection`` builds and, on a raw
+transport, counts the signal as noise.)  The median is still read from the whole matrix -- signal
+included -- so a matrix carrying
 a lot of structure lifts its own floor and hides its weakest modes.  Measured here on planted
 ranks at ``d = 256``, every mode supra-threshold by the BBP criterion:
 
@@ -82,11 +86,21 @@ from dataclasses import dataclass
 
 import numpy as np
 from entroptics import null_providers
-from entroptics.projection import mode_significance, noise_floor
+from entroptics.projection import live_columns, mode_significance, noise_floor
 
 from .frames import as_frame
 
-NULLS = {"mp": null_providers.mp, "robust": null_providers.robust}
+#: ``mp`` is the edge read on the matrix as it stands (``mp_median``), not the library's
+#: whitened-screen ``mp``: a transport is not whitened, so its mean cell energy is mostly signal.
+NULLS = {"mp": null_providers.mp_median, "robust": null_providers.robust}
+
+
+def mp_significance(A: np.ndarray, s: np.ndarray):
+    """Per-mode Tracy-Widom evidence against the ``mp`` null above, on the same variance its floor
+    reads, so ``#(p_k < far) == K`` under ``mp`` at every ``far``."""
+    N, F = int(A.shape[0]), live_columns(A)
+    cx = bool(np.iscomplexobj(A))
+    return mode_significance(A, s, sigma2=null_providers.median_noise_sigma2(np, A, N, F, complex_=cx))
 
 
 @dataclass(frozen=True)
@@ -177,7 +191,7 @@ def transport_spectrum(J, *, far: float = 0.05, null: str = "mp", seed: int = 0,
         raise ValueError(f"unknown null {null!r}; available: {sorted(NULLS)}")
     A = as_frame(J, name="J")
     s = np.linalg.svd(A, compute_uv=False) if s is None else np.asarray(s, dtype=np.float64)
-    ms = mode_significance(A, s)
+    ms = mp_significance(A, s)
     kurt = _excess_kurtosis(A)
     floor = float(noise_floor(A, far=far, null=NULLS[null], s=s, seed=seed))
     K = int((s > floor).sum())

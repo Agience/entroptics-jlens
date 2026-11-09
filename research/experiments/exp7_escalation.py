@@ -63,7 +63,7 @@ def resolved_energy_fraction(H, far: float = 0.05):
     from entroptics.projection import noise_floor
     A = je.as_frame(H, name="H")
     U, s, Vt = np.linalg.svd(A, full_matrices=False)
-    k = int((s > float(noise_floor(A, far=far, s=s))).sum())
+    k = int((s > float(noise_floor(A, far=far, null=je.NULLS["mp"], s=s))).sum())
     if k == 0:
         return np.zeros(A.shape[0])
     P = A @ Vt[:k].T

@@ -1,17 +1,15 @@
 """How much of each headline number is a mean, and how wide is the sample behind it?
 
-sec 7.1 reported that gemma-3-1b's complement removes "exactly" the number of directions its
-transport carries -- 12.0 against 12.0. A second prompt sample gave 9.9, and the per-prompt
-removals turned out to be 11, 10, 16, 11, 8, 5, 18, 0: a standard deviation of 5.7 around a mean
-that had landed on the deterministic value by chance. The identity was an artefact of averaging.
+A mean over eight prompts can land on a round value by chance, so a single figure is checked
+against the spread behind it before a claim is built on it.
 
 Every quantity exp4 reports is a mean over prompts and every results file keeps the per-prompt
 values, so the same question can be asked of all of them at once: for each layer, how large is the
 spread relative to the number being quoted? A quantity whose per-prompt standard deviation rivals
 its mean is a quantity no single-figure claim should be built on.
 
-Reports the worst offenders per file, and separately the spread on `outside%`, which is the
-central claim of sec 7.
+Reports the worst offenders per file, and separately the spread on `outside%`, the ratio sec 6
+reports.
 """
 from __future__ import annotations
 
@@ -66,7 +64,7 @@ def main(argv=None) -> int:
                 print(f"{f.name:22s}{key:20s}{l:>12}{m:>9.2f}{sd:>8.2f}{rel:>9.2f}{flag}")
 
     print()
-    print("outside% -- the central claim of sec 7 -- per-prompt, by model")
+    print("outside% -- the ratio sec 6 reports -- per-prompt, by model")
     print(f"{'file':22s}{'layers':>8}{'mean of means':>15}{'worst sd':>10}{'worst layer':>12}")
     for f in a.files:
         try:

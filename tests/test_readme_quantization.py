@@ -1,4 +1,4 @@
-"""The quantisation numbers the README quotes, recomputed from the model's own weights.
+"""The quantization numbers the README quotes, recomputed from the model's own weights.
 
 `experiments/exp49_quantization_damage.py` is the script; these are its published figures.
 
@@ -34,27 +34,28 @@ def _gpt2_is_cached() -> bool:
     return any(root.rglob("models--gpt2/snapshots/*/*.safetensors")) or         any(root.rglob("models--gpt2/snapshots/*/pytorch_model.bin"))
 
 
-def quant_rows() -> dict[int, dict[int, float]]:
-    """The README's quantisation table, parsed back into numbers."""
+def quant_rows() -> dict[int, dict[int, float | None]]:
+    """The README's quantization table, parsed back into numbers; ``None`` where the README says a
+    cell is undefined (the quantized matrix has no top-64 subspace)."""
     text = README.read_text(encoding="utf-8")
     block = re.search(r"\| layer \| int8 \| int4 \| int3 \|.*?\n\n", text, re.DOTALL)
-    assert block, "the quantisation table is no longer in the README in this shape"
+    assert block, "the quantization table is no longer in the README in this shape"
     out: dict[int, dict[int, float]] = {}
     for line in block.group(0).splitlines():
         m = re.match(r"\|\s*\*{0,2}(\d+)\*{0,2}\s*\|(.+)\|$", line)
         if not m:
             continue
-        vals = [float(c.replace("*", "").strip())
-                for c in m.group(2).split("|") if c.replace("*", "").strip()]
+        cells = [c.replace("*", "").strip() for c in m.group(2).split("|")]
+        vals = [None if c == "undefined" else float(c) for c in cells if c]
         if len(vals) == 3:
             out[int(m.group(1))] = dict(zip((8, 4, 3), vals))
     return out
 
 
-def test_the_quantisation_table_was_parsed():
+def test_the_quantization_table_was_parsed():
     """The premise: a regex matching nothing would make everything below vacuous."""
     rows = quant_rows()
-    assert set(rows) == {0, 3, 6, 9, 11}, f"parsed layers {sorted(rows)}"
+    assert set(rows) == set(range(12)), f"parsed layers {sorted(rows)}"
     assert all(set(v) == {8, 4, 3} for v in rows.values())
 
 
@@ -62,16 +63,17 @@ def test_the_table_says_what_the_readme_claims_it_says():
     """The two claims the section makes, as opposed to any one cell: int8 holds everywhere and is
     worst at layer 11, and int4 damage is uneven rather than uniform."""
     rows = quant_rows()
-    assert all(v[8] > 0.95 for v in rows.values()), "int8 must hold everywhere"
+    assert all(v[8] is not None and v[8] > 0.95 for v in rows.values()), "int8 must hold everywhere"
     assert min(rows, key=lambda layer: rows[layer][8]) == 11, "layer 11 is int8's worst"
-    int4 = [v[4] for v in rows.values()]
+    int4 = [v[4] for v in rows.values() if v[4] is not None]
     assert max(int4) - min(int4) > 0.4, "the section's point is that int4 damage is uneven"
 
 
 def test_fewer_bits_never_read_as_less_damage():
     """Monotonicity, which the table would violate if a row were mistyped."""
     for layer, v in quant_rows().items():
-        assert v[8] >= v[4] >= v[3], f"layer {layer} is not monotone in bit width: {v}"
+        defined = [v[b] for b in (8, 4, 3) if v[b] is not None]
+        assert defined == sorted(defined, reverse=True),             f"layer {layer} is not monotone in bit width: {v}"
 
 
 def _script():
@@ -81,7 +83,7 @@ def _script():
     return mod
 
 
-def test_the_scripts_quantiser_is_a_real_one():
+def test_the_scripts_quantizer_is_a_real_one():
     """Cheap, and worth pinning: a `quantize` that returned its input unchanged would make every
     agreement score 1.0 and the whole table meaningless."""
     exp49 = _script()
@@ -98,7 +100,7 @@ def test_the_scripts_quantiser_is_a_real_one():
 
 
 @pytest.mark.skipif(not _gpt2_is_cached(), reason="gpt2 is not in the local HF cache")
-def test_the_quantisation_numbers_reproduce():
+def test_the_quantization_numbers_reproduce():
     import transformers
 
     exp49 = _script()
@@ -106,6 +108,12 @@ def test_the_quantisation_numbers_reproduce():
     for layer, expected in quant_rows().items():
         W = model.transformer.h[layer].attn.c_proj.weight.detach().numpy().astype(np.float64)
         for bits, want in expected.items():
+            if want is None:
+                # undefined in the README because the quantized matrix has no top-64 subspace --
+                # and the read must refuse it rather than return LAPACK's arbitrary basis
+                with pytest.raises(ValueError, match="subspace is not defined"):
+                    je.principal_angles(W, exp49.quantize(W, bits), k=64)
+                continue
             got = float(je.principal_angles(W, exp49.quantize(W, bits), k=64).mean())
             assert round(got, 4) == want, f"layer {layer}, int{bits}: {got:.4f} against {want}"
 

@@ -86,7 +86,8 @@ def test_the_citation_carries_the_doi_and_the_installable_package():
     text = PAPER.read_text(encoding="utf-8")
     assert "10.5281/zenodo.21273400" in text, "the Zenodo DOI is missing"
     assert "pypi.org/project/entroptics" in text, "the PyPI source is missing"
-    assert "0.2.1" in text, "the pinned version the measurements used is missing"
+    assert re.search(r"this work uses 0\.2\.10\b", text), \
+        "the version the measurements were read through is missing"
 
 
 def test_the_package_depends_on_the_published_entroptics():
